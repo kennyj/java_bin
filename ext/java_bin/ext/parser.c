@@ -318,15 +318,15 @@ static VALUE rb_cParser_init(VALUE self) {
  */
 void Init_parser(void) {
   i_At = rb_intern("at");
-
 #ifdef HAVE_RUBY_ENCODING_H
   rb_encUtf8 = rb_utf8_encoding();
 #endif
 
   /* クラス定義 */
   rb_mJavaBin = rb_define_module("JavaBin");
-  rb_mExt = rb_define_module_under(rb_mJavaBin, "Ext");
-  rb_cParser = rb_define_class_under("Parser", rb_mExt, rb_cObject);
+  rb_mExt     = rb_define_module_under(rb_mJavaBin, "Ext");
+  rb_cParser  = rb_define_class_under(rb_mExt, "Parser", rb_cObject);
+
   /* メモリーアロケーター設定 */
   rb_define_alloc_func(rb_cParser, JavaBinReader_alloc);
   /* コンストラクタ */

@@ -11,6 +11,7 @@ if CONFIG['CC'] =~ /gcc/
   #  $CFLAGS << ' -O0 -ggdb'
   #end
 end
+
 if RUBY_VERSION >= '1.9'
   $CFLAGS << ' -DRUBY_19'
 end
