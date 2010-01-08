@@ -1,91 +1,16 @@
-#include <endian.h>
-#include <byteswap.h>
-#include <sys/types.h>
-
-#include <ruby.h>
-#include <ruby/encoding.h>
+# include "parser.h"
 
 /*
- * javabin constants
+ * variables
  */
-#define  NULL_MARK    0
-#define  BOOL_TRUE    1
-#define  BOOL_FALSE   2
-#define  BYTE         3
-#define  SHORT        4
-#define  DOUBLE       5
-#define  INT          6
-#define  LONG         7
-#define  FLOAT        8
-#define  DATE         9
-#define  MAP         10
-#define  SOLRDOC     11
-#define  SOLRDOCLST  12
-#define  BYTEARR     13
-#define  ITERATOR    14
-#define  END         15
-/*#define  TAG_AND_LEN     (1U << 5)*/
-#define  STR             (1U << 5)
-#define  SINT            (2U << 5)
-#define  SLONG           (3U << 5)
-#define  ARR             (4U << 5)
-#define  ORDERED_MAP     (5U << 5)
-#define  NAMED_LST       (6U << 5)
-#define  EXTERN_STRING   (7U << 5)
+static VALUE rb_mJavaBin;
+static VALUE rb_mExt;
+static VALUE rb_cParser;
 
-/* HINT. 終端判定用オブジェクト */
-#define END_OBJ ((int) NULL)
-
-/* HINT. 先に計算しておく(unsignedなので論理シフト) */
-#define  SHIFTED_STR             (STR >> 5)
-#define  SHIFTED_ARR             (ARR >> 5)
-#define  SHIFTED_EXTERN_STRING   (EXTERN_STRING >> 5)
-#define  SHIFTED_ORDERED_MAP     (ORDERED_MAP >> 5)
-#define  SHIFTED_NAMED_LST       (NAMED_LST >> 5)
-#define  SHIFTED_SINT            (SINT >> 5)
-#define  SHIFTED_SLONG           (SLONG >> 5)
-
-static VALUE rb_cJavaBinReader;
-static ID    rb_idAt; // Time#at用
+static ID    i_At; // Time#at用
+#ifdef HAVE_RUBY_ENCODING_H
 static rb_encoding* rb_encUtf8;
-
-/*
- * macros
- */
-#define _getbyte(ptr)          (ptr->data[ptr->current++])
-#define _skipbytes(ptr, x)     ((ptr->current) += (x))
-#define _utf8_string(str, len) (rb_enc_str_new(str, len, rb_encUtf8))
-#define _readnumeric(ptr, c) \
-  ({ u_int8_t* p; \
-     p = (void*)&c; \
-     memcpy(p, &ptr->data[ptr->current], sizeof(c)); \
-     _skipbytes(ptr, sizeof(c)); c; \
-   })
-
-/*
- * 参照文字列情報保持用
- */
-typedef struct extern_string {
-  int offset;
-  int len;
-} _EXTERN_STRING_INFO;
-
-/*
- * 読込処理データ保持構造体
- */
-typedef struct java_bin_reader {
-  unsigned char* data;
-  int            data_len;
-  int            current;
-  unsigned char  tag_byte;
-
-  /* 外部文字列用 TODO ちゃんとする */
-  _EXTERN_STRING_INFO cache[256]; 
-  int                 cache_index;
-  int                 last_string_offset;
-  int                 last_string_len;
-
-} JAVA_BIN_READER;
+#endif
 
 /*
  * javabinフォーマット読み込み関数群
@@ -171,19 +96,21 @@ static VALUE _read_byte(JAVA_BIN_READER* ptr) {
   c = _readnumeric(ptr, c);
   return INT2NUM(*((int8_t*)&c));
 }
+
 static VALUE _read_short(JAVA_BIN_READER* ptr) {
   u_int16_t c;
   c = _readnumeric(ptr, c);
   c = bswap_16(c); /* TODO cpuによって違うはず */
   return INT2NUM(*((int16_t*)&c));
-
 }
+
 static VALUE _read_int(JAVA_BIN_READER* ptr) {
   u_int32_t c;
   c = _readnumeric(ptr, c);
   c = bswap_32(c);
   return INT2NUM(*((int32_t*)&c));
 }
+
 static VALUE _read_long(JAVA_BIN_READER* ptr) {
   u_int64_t c;
   c = _readnumeric(ptr, c);
@@ -195,7 +122,7 @@ static VALUE _read_date(JAVA_BIN_READER* ptr) {
   u_int64_t c;
   c = _readnumeric(ptr, c);
   c = bswap_64(c);
-  return rb_funcall(rb_cTime, rb_idAt, 1, ULL2NUM(*((int64_t*)&c) / 1000));
+  return rb_funcall(rb_cTime, i_At, 1, ULL2NUM(*((int64_t*)&c) / 1000));
 }
 
 static VALUE _read_float(JAVA_BIN_READER* ptr) {
@@ -327,7 +254,21 @@ static VALUE JavaBinReader_read_val(JAVA_BIN_READER* ptr) {
   }
 }
 
-static VALUE JavaBinReader_process(VALUE self, VALUE data) {
+static void JavaBinReader_free(JAVA_BIN_READER* ptr) {
+  if (ptr) {
+    // free(ptr->data);
+    free(ptr);
+  }
+}
+
+static VALUE JavaBinReader_alloc(VALUE klass) {
+  return Data_Wrap_Struct(klass, 0, JavaBinReader_free, NULL);
+}
+
+/*
+ * rubyメソッド
+ */
+static VALUE rb_cParser_parse(VALUE self, VALUE data) {
   JAVA_BIN_READER* ptr;
   char* ptrData;
   int   dataLen;
@@ -341,7 +282,7 @@ static VALUE JavaBinReader_process(VALUE self, VALUE data) {
 
   /* 引数チェック */
   if (ptrData == NULL || dataLen == 0) {
-    rb_raise(rb_eRuntimeError, "JavaBinReader_alloc - data is empty.");
+    rb_raise(rb_eRuntimeError, "rb_cParser_parse - data is empty.");
   }
 
   //  ptr->data = (unsigned char*) malloc(dataLen);
@@ -359,41 +300,38 @@ static VALUE JavaBinReader_process(VALUE self, VALUE data) {
   return JavaBinReader_read_val(ptr);
 }
 
-static VALUE JavaBinReader_init(VALUE self) {
+static VALUE rb_cParser_init(VALUE self) {
   JAVA_BIN_READER* ptr;
 
   /* データの初期化 */
   ptr = (JAVA_BIN_READER*) malloc(sizeof(JAVA_BIN_READER));
   if (!ptr) {
-    rb_raise(rb_eRuntimeError, "JavaBinReader_alloc - allocate error");
+    rb_raise(rb_eRuntimeError, "rb_cParser_init - allocate error");
   }
   DATA_PTR(self) = ptr;
  
   return self;
 }
 
-static void JavaBinReader_free(JAVA_BIN_READER* ptr) {
-  if (ptr) {
-    // free(ptr->data);
-    free(ptr);
-  }
-}
+/*
+ * エントリーポイント
+ */
+void Init_parser(void) {
+  i_At = rb_intern("at");
 
-static VALUE JavaBinReader_alloc(VALUE klass) {
-  return Data_Wrap_Struct(klass, 0, JavaBinReader_free, NULL);
-}
-
-void Init_JavaBinReader(void) {
+#ifdef HAVE_RUBY_ENCODING_H
   rb_encUtf8 = rb_utf8_encoding();
-  rb_idAt = rb_intern("at");
+#endif
 
   /* クラス定義 */
-  rb_cJavaBinReader = rb_define_class("JavaBinReader", rb_cObject);
+  rb_mJavaBin = rb_define_module("JavaBin");
+  rb_mExt = rb_define_module_under(rb_mJavaBin, "Ext");
+  rb_cParser = rb_define_class_under("Parser", rb_mExt, rb_cObject);
   /* メモリーアロケーター設定 */
-  rb_define_alloc_func(rb_cJavaBinReader, JavaBinReader_alloc);
+  rb_define_alloc_func(rb_cParser, JavaBinReader_alloc);
   /* コンストラクタ */
-  rb_define_method(rb_cJavaBinReader, "initialize", JavaBinReader_init, 0);
-  /* processメソッド*/
-  rb_define_method(rb_cJavaBinReader, "process", JavaBinReader_process, 1);
+  rb_define_method(rb_cParser, "initialize", rb_cParser_init, 0);
+  /* parseメソッド*/
+  rb_define_method(rb_cParser, "parse", rb_cParser_parse, 1);
 }
 

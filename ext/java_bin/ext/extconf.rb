@@ -19,6 +19,6 @@ have_header("endian.h")
 have_header("byteswap.h")
 have_header("sys/types.h")
 
-#have_header("ruby/encoding.h")
+have_header("ruby/encoding.h")
 
 create_makefile("parser")
