@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.date = %q{2010-01-09}
   s.description = %q{TODO: longer description of your gem}
   s.email = %q{kennyj@gmail.com}
+  s.extensions = ["ext/extconf.rb"]
   s.extra_rdoc_files = [
     "LICENSE",
      "README.rdoc"
@@ -22,6 +23,8 @@ Gem::Specification.new do |s|
      "LICENSE",
      "README.rdoc",
      "Rakefile",
+     "VERSION",
+     "java_bin.gemspec",
      "lib/java_bin.rb",
      "test/helper.rb",
      "test/test_java_bin.rb"
