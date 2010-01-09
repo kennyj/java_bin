@@ -16,7 +16,7 @@
 #endif /* HAVE_SYS_TYPES_H */
 
 #ifdef HAVE_RUBY_ENCODING_H
-#include "ruby/encoding.h"
+#include <ruby/encoding.h>
 #define FORCE_UTF8(obj) rb_enc_associate((obj), rb_utf8_encoding())
 #else
 #define FORCE_UTF8(obj)
