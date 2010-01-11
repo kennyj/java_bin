@@ -88,15 +88,17 @@ class TestJavaBin < Test::Unit::TestCase
   end
 
   def test_byte
-    assert_equal  1, @parser.parse([1, 3, 0x01].pack("C*"))
-    assert_equal -1, @parser.parse([1, 3, 0xff].pack("C*"))
-    assert_equal -2, @parser.parse([1, 3, 0xfe].pack("C*"))
+    assert_equal  1,  @parser.parse([1, 3, 0x01].pack("C*"))
+    assert_equal 127, @parser.parse([1, 3, 0x7f].pack("C*"))
+    assert_equal -1,  @parser.parse([1, 3, 0xff].pack("C*"))
+    assert_equal -2,  @parser.parse([1, 3, 0xfe].pack("C*"))
   end
 
   def test_short
-    assert_equal  1, @parser.parse([1, 4, 0x00, 0x01].pack("C*"))
-    assert_equal -1, @parser.parse([1, 4, 0xff, 0xff].pack("C*"))
-    assert_equal -2, @parser.parse([1, 4, 0xff, 0xfe].pack("C*"))
+    assert_equal  1,    @parser.parse([1, 4, 0x00, 0x01].pack("C*"))
+    assert_equal 32767, @parser.parse([1, 4, 0x7f, 0xff].pack("C*"))
+    assert_equal -1,    @parser.parse([1, 4, 0xff, 0xff].pack("C*"))
+    assert_equal -2,    @parser.parse([1, 4, 0xff, 0xfe].pack("C*"))
   end
 
   def test_double
@@ -104,15 +106,17 @@ class TestJavaBin < Test::Unit::TestCase
   end
 
   def test_int
-    assert_equal  1, @parser.parse([1, 6, 0x00, 0x00, 0x00, 0x01].pack("C*"))
-    assert_equal -1, @parser.parse([1, 6, 0xff, 0xff, 0xff, 0xff].pack("C*"))
-    assert_equal -2, @parser.parse([1, 6, 0xff, 0xff, 0xff, 0xfe].pack("C*"))
+    assert_equal  1,         @parser.parse([1, 6, 0x00, 0x00, 0x00, 0x01].pack("C*"))
+    assert_equal 2147483647, @parser.parse([1, 6, 0x7f, 0xff, 0xff, 0xff].pack("C*"))
+    assert_equal -1,         @parser.parse([1, 6, 0xff, 0xff, 0xff, 0xff].pack("C*"))
+    assert_equal -2,         @parser.parse([1, 6, 0xff, 0xff, 0xff, 0xfe].pack("C*"))
   end
 
   def test_long
-    assert_equal  1, @parser.parse([1, 7, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01].pack("C*"))
-    assert_equal -1, @parser.parse([1, 7, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff].pack("C*"))
-    assert_equal -2, @parser.parse([1, 7, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe].pack("C*"))
+    assert_equal  1,                   @parser.parse([1, 7, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01].pack("C*"))
+    assert_equal 9223372036854775807 , @parser.parse([1, 7, 0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff].pack("C*"))
+    assert_equal -1,                   @parser.parse([1, 7, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff].pack("C*"))
+    assert_equal -2,                   @parser.parse([1, 7, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xfe].pack("C*"))
   end
 
   def test_float
@@ -122,7 +126,7 @@ class TestJavaBin < Test::Unit::TestCase
   def test_date
     t = Time.now
     x = (t.to_f * 1000).to_i
-    x = [x].pack("q").unpack("C*").reverse
+    x = [x].pack("q").unpack("C*").reverse # TODO endian次第なので修正必要
     assert_equal t.to_i, @parser.parse(([1, 9] + x).pack("C*")).to_i
   end
 
