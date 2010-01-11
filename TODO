@@ -1,11 +1,14 @@
 * gem化
 * 他のgemの依存関係
 ** rsolr/solr-rubyのmonkey-patch
-* builder作成
 * hashのキーをsymbolにする
 * Windowsでのビルド確認
 * ドキュメント
 * LGPLとの関係を確認する
+* testcaseの充実
+** 容量の大きい場合
+** ruby 1.8.x/1.9.xでの互換性維持
+* builder(writer)作成
 
 * -cacheの動的確保-
 * -swapの環境判定-
