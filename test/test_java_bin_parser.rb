@@ -72,7 +72,7 @@ class TestJavaBin < Test::Unit::TestCase
     puts ""
     r_et  = elapsed_time("ruby parse.    ", TIMES) { eval(r) }
     jb_et = elapsed_time("javabin parse. ", TIMES) { @parser.parse(jb) }
-    assert jb_et * 3 > r
+    assert jb_et * 3 > r_et
   end
 
   def test_null
