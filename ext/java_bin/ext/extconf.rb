@@ -1,4 +1,4 @@
-# come from flori-json thk!
+# vim:fileencoding=utf-8
 require 'mkmf'
 require 'rbconfig'
 

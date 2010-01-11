@@ -1,3 +1,4 @@
+# vim:fileencoding=utf-8
 module JavaBin
   # JavaBin version
   VERSION = '0.1.0'

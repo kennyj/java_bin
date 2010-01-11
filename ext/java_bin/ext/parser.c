@@ -1,3 +1,4 @@
+/* utf-8 */
 #include "parser.h"
 
 /*

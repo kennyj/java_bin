@@ -1,3 +1,4 @@
+# vim:fileencoding=utf-8
 module JavaBin
   module Pure
     require 'java_bin/pure/parser'

@@ -1,3 +1,4 @@
+# vim:fileencoding=utf-8
 module JavaBin
   def self.parser=(value)
     @parser = value
@@ -9,8 +10,9 @@ module JavaBin
   require 'java_bin/version'
   begin
     require 'java_bin/ext'
-  rescue LoadError
-    require 'java_bin/pure'
+  rescue LoadError => e
+puts e
+#    require 'java_bin/pure'
   end
 
 end
