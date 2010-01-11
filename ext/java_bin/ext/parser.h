@@ -77,11 +77,12 @@ typedef struct java_bin_reader {
   int            current;
   unsigned char  tag_byte;
 
-  /* 外部文字列用 TODO ちゃんとする */
-  _EXTERN_STRING_INFO cache[256]; 
-  int                 cache_index;
-  int                 last_string_offset;
-  int                 last_string_len;
+  /* 外部文字列用 */
+  _EXTERN_STRING_INFO* cache; 
+  int                  cache_size;
+  int                  cache_index;
+  int                  last_string_offset;
+  int                  last_string_len;
 
 } JAVA_BIN_PARSER;
 
@@ -126,6 +127,7 @@ static VALUE JavaBinParser_read_double(JAVA_BIN_PARSER* ptr);
 static VALUE JavaBinParser_read_val(JAVA_BIN_PARSER* ptr);
 static void JavaBinParser_free(JAVA_BIN_PARSER* ptr);
 static VALUE JavaBinParser_alloc(VALUE klass);
+static void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr);
 static VALUE rb_cParser_parse(VALUE self, VALUE data);
 static VALUE rb_cParser_init(VALUE self);
 

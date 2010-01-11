@@ -197,4 +197,19 @@ class TestJavaBin < Test::Unit::TestCase
     assert_equal({"a" => "あいa", "b" => "あいa"}, @parser.parse(arr.pack("C*")))
   end
 
+  LARGE_SIZE = 1000
+  def test_long_large_amount_extern_string
+    sio = StringIO.new
+    sio.putc 1 #VERSION
+    write_tag(4 << 5, LARGE_SIZE, sio)
+    LARGE_SIZE.times { |i|
+      sio.putc((7 << 5) | 0)
+      sio.putc((1 << 5) | 1)
+      sio.putc("a")
+      write_tag((7 << 5), i, sio)
+    }
+    sio.pos = 0
+    assert_equal ['a'] * LARGE_SIZE, @parser.parse(sio.read)
+  end
+
 end
