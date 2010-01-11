@@ -92,48 +92,48 @@ static VALUE JavaBinParser_read_string(JAVA_BIN_PARSER* ptr) {
   return _utf8_string((const char*) &ptr->data[ptr->last_string_offset], ptr->last_string_len); 
 }
 
-static VALUE _read_byte(JAVA_BIN_PARSER* ptr) {
+static VALUE JavaBinParser_read_byte(JAVA_BIN_PARSER* ptr) {
   int8_t c;
   c = _readnumeric(ptr, c);
   return INT2NUM(*((int8_t*)&c));
 }
 
-static VALUE _read_short(JAVA_BIN_PARSER* ptr) {
+static VALUE JavaBinParser_read_short(JAVA_BIN_PARSER* ptr) {
   u_int16_t c;
   c = _readnumeric(ptr, c);
   c = bswap_16(c); /* TODO cpuによって違うはず */
   return INT2NUM(*((int16_t*)&c));
 }
 
-static VALUE _read_int(JAVA_BIN_PARSER* ptr) {
+static VALUE JavaBinParser_read_int(JAVA_BIN_PARSER* ptr) {
   u_int32_t c;
   c = _readnumeric(ptr, c);
   c = bswap_32(c);
   return INT2NUM(*((int32_t*)&c));
 }
 
-static VALUE _read_long(JAVA_BIN_PARSER* ptr) {
+static VALUE JavaBinParser_read_long(JAVA_BIN_PARSER* ptr) {
   u_int64_t c;
   c = _readnumeric(ptr, c);
   c = bswap_64(c);
   return LL2NUM(*((int64_t*)&c));
 }
 
-static VALUE _read_date(JAVA_BIN_PARSER* ptr) {
+static VALUE JavaBinParser_read_date(JAVA_BIN_PARSER* ptr) {
   u_int64_t c;
   c = _readnumeric(ptr, c);
   c = bswap_64(c);
   return rb_funcall(rb_cTime, i_At, 1, ULL2NUM(*((int64_t*)&c) / 1000));
 }
 
-static VALUE _read_float(JAVA_BIN_PARSER* ptr) {
+static VALUE JavaBinParser_read_float(JAVA_BIN_PARSER* ptr) {
   u_int32_t c;
   c = _readnumeric(ptr, c);
   c = bswap_32(c);
   return rb_float_new((double)*((float*)&c));
 }
 
-static VALUE _read_double(JAVA_BIN_PARSER* ptr) {
+static VALUE JavaBinParser_read_double(JAVA_BIN_PARSER* ptr) {
   u_int64_t c;
   c = _readnumeric(ptr, c);
   c = bswap_64(c);
@@ -193,19 +193,19 @@ static VALUE JavaBinParser_read_val(JAVA_BIN_PARSER* ptr) {
 
   switch(ptr->tag_byte) {
     case BYTE:
-      return _read_byte(ptr);
+      return JavaBinParser_read_byte(ptr);
     case SHORT:
-      return _read_short(ptr);
+      return JavaBinParser_read_short(ptr);
     case DOUBLE:
-      return _read_double(ptr);
+      return JavaBinParser_read_double(ptr);
     case INT:
-      return _read_int(ptr);
+      return JavaBinParser_read_int(ptr);
     case LONG:
-      return _read_long(ptr);
+      return JavaBinParser_read_long(ptr);
     case FLOAT:
-      return _read_float(ptr);
+      return JavaBinParser_read_float(ptr);
     case DATE:
-      return _read_date(ptr);
+      return JavaBinParser_read_date(ptr);
     case BYTEARR:
       size = JavaBinParser_read_v_int(ptr);
       array = rb_ary_new();
