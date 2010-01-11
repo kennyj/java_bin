@@ -100,6 +100,16 @@ typedef struct java_bin_reader {
      _skipbytes(ptr, sizeof(c)); c; \
    })
 
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+  #define _swap_16(o) bswap_16(o)
+  #define _swap_32(o) bswap_32(o)
+  #define _swap_64(o) bswap_64(o)
+#else
+  #define _swap_16(o) (o)
+  #define _swap_32(o) (o)
+  #define _swap_64(o) (o)
+#endif
+
 static int32_t JavaBinParser_read_v_int(JAVA_BIN_PARSER* ptr);
 static int64_t JavaBinParser_read_v_long(JAVA_BIN_PARSER* ptr);
 static int JavaBinParser_read_size(JAVA_BIN_PARSER* ptr);
