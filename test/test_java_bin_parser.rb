@@ -1,4 +1,5 @@
 # vim:fileencoding=utf-8
+require 'stringio'
 require 'helper'
 
 case ENV['JavaBin']
