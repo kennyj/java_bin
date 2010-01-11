@@ -10,6 +10,18 @@ else
 end
 
 class TestJavaBin < Test::Unit::TestCase
+
+  private
+  def write_v_int(i, output)
+    while ((i & ~0x7F) != 0) 
+      output.putc(((i & 0x7f) | 0x80))
+      # i >>>= 7
+      i = (i >> 7) # TODO 論理シフト
+    end 
+    output.putc(i)
+  end
+
+  public
   def setup
     @parser = JavaBin.parser.new
   end
@@ -84,9 +96,13 @@ class TestJavaBin < Test::Unit::TestCase
   end
 
   def test_solrdoc
+    arr = [1, 11] + [(5 << 5) | 2] + [(1 << 5) | 1] + "a".unpack("C*") + [3, 8] + [(1 << 5) | 1] + "b".unpack("C*") + [3, 9]
+    assert_equal({"a" => 8, "b" => 9}, @parser.parse(arr.pack("C*")))
   end
 
   def test_solrdoclst
+    arr = [1, 12] + [(4 << 5) | 3, 3, 3, 3, 4, 3, 5] + [(4 << 5) | 0]
+    assert_equal({'numFound' => 3, 'start' => 4, 'maxScore' => 5, 'docs' => []}, @parser.parse(arr.pack("C*")))
   end
 
   def test_bytearr
@@ -106,23 +122,36 @@ class TestJavaBin < Test::Unit::TestCase
   end
 
   def test_long_string
+    flunk("not implemented yet.")
   end
 
   def test_sint
+    flunk("not implemented yet.")
   end
 
   def test_slong
+    flunk("not implemented yet.")
   end
 
   def test_arr
+    assert_equal [3, 4], @parser.parse([1, (4 << 5) | 2, 3, 3, 3, 4].pack("C*"))
   end
 
   def test_ordered_map
+    arr = [1, (5 << 5) | 2] + [(1 << 5) | 1] + "a".unpack("C*") + [3, 8] + [(1 << 5) | 1] + "b".unpack("C*") + [3, 9]
+    assert_equal({"a" => 8, "b" => 9}, @parser.parse(arr.pack("C*")))
   end
 
-  def test_named_lst
-  end
+#  def test_named_lst
+#  end
 
   def test_extern_string
+    arr = [1, (5 << 5) | 2] +
+          [(1 << 5) | 1] + "a".unpack("C*") +
+          [(7 << 5) | 0] + [(1 << 5) | 3] + "あいa".unpack("C*") +
+          [(1 << 5) | 1] + "b".unpack("C*") +
+          [(7 << 5) | 1]
+    assert_equal({"a" => "あいa", "b" => "あいa"}, @parser.parse(arr.pack("C*")))
   end
+
 end

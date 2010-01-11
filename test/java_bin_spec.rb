@@ -49,14 +49,14 @@ end
 
 describe JavaBin::Reader do
 
-  def write_v_int(i, output)
-    while ((i & ~0x7F) != 0) 
-      output.putc(((i & 0x7f) | 0x80))
-      # i >>>= 7
-      i = (i >> 7) # TODO 論理シフト
-    end 
-    output.putc(i)
-  end
+#  def write_v_int(i, output)
+#    while ((i & ~0x7F) != 0) 
+#      output.putc(((i & 0x7f) | 0x80))
+#      # i >>>= 7
+#      i = (i >> 7) # TODO 論理シフト
+#    end 
+#    output.putc(i)
+#  end
 
   before do
     @reader = JavaBin::Reader.new('dummy')
@@ -156,18 +156,18 @@ describe JavaBin::Reader do
 #      @reader.send(:read_val).should == {0 => 0, 1 => 1}
 #    end
 #
-    it "11を渡すと、tag_byteはSOLRDOCになる" do
-      arr = [JavaBin::SOLRDOC] + [(5 << 5) | 2] + [(1 << 5) | 1] + "a".unpack("C*") + [JavaBin::BYTE, 8] + [(1 << 5) | 1] + "b".unpack("C*") + [JavaBin::BYTE, 9]
-      @reader.set_sio(StringIO.new(arr.pack("C*")))
-      @reader.send(:read_val).should == {"a" => 8, "b" => 9} 
-    end
-
-    it "12を渡すと、tag_byteはSOLRDOCLSTになる" do
-      arr = [JavaBin::SOLRDOCLST] + [(4 << 5) | 3, JavaBin::BYTE, 3, JavaBin::BYTE, 4, JavaBin::BYTE, 5] + [(4 << 5) | 0]
-      @reader.set_sio(StringIO.new(arr.pack("C*")))
-      @reader.send(:read_val).should == {'numFound' => 3, 'start' => 4, 'maxScore' => 5, 'docs' => []} 
-    end
-
+#    it "11を渡すと、tag_byteはSOLRDOCになる" do
+#      arr = [JavaBin::SOLRDOC] + [(5 << 5) | 2] + [(1 << 5) | 1] + "a".unpack("C*") + [JavaBin::BYTE, 8] + [(1 << 5) | 1] + "b".unpack("C*") + [JavaBin::BYTE, 9]
+#      @reader.set_sio(StringIO.new(arr.pack("C*")))
+#      @reader.send(:read_val).should == {"a" => 8, "b" => 9} 
+#    end
+#
+#    it "12を渡すと、tag_byteはSOLRDOCLSTになる" do
+#      arr = [JavaBin::SOLRDOCLST] + [(4 << 5) | 3, JavaBin::BYTE, 3, JavaBin::BYTE, 4, JavaBin::BYTE, 5] + [(4 << 5) | 0]
+#      @reader.set_sio(StringIO.new(arr.pack("C*")))
+#      @reader.send(:read_val).should == {'numFound' => 3, 'start' => 4, 'maxScore' => 5, 'docs' => []} 
+#    end
+#
 #    it "13を渡すと、tag_byteはBYTEARRになる" do
 #      array = [0,1, 255]
 #      @reader.set_sio(StringIO.new([JavaBin::BYTEARR, array.size, *array].pack("C*")))
@@ -218,29 +218,28 @@ describe JavaBin::Reader do
       pending "long/intの違い大丈夫か？"
     end
 
-    it "4 << 5を渡すと、tag_byteはARRになる" do
-      sio = StringIO.new([(4 << 5) | 2, JavaBin::BYTE, 3, JavaBin::BYTE, 4].pack("C*"))
-      @reader.set_sio(sio)
-      @reader.send(:read_val).should == [3, 4]      
-    end
+#    it "4 << 5を渡すと、tag_byteはARRになる" do
+#      sio = StringIO.new([(4 << 5) | 2, JavaBin::BYTE, 3, JavaBin::BYTE, 4].pack("C*"))
+#      @reader.set_sio(sio)
+#      @reader.send(:read_val).should == [3, 4]      
+#    end
  
     it "4 << 5と大きな配列を渡すと、tag_byteはARRになる" do
       pending
     end
 
-    it "5 << 5を渡すと、tag_byteはORDERED_MAPになる" do
-      arr = [(5 << 5) | 2] + [(1 << 5) | 1] + "a".unpack("C*") + [JavaBin::BYTE, 8] + [(1 << 5) | 1] + "b".unpack("C*") + [JavaBin::BYTE, 9]
-      @reader.set_sio(StringIO.new(arr.pack("C*")))
-      @reader.send(:read_val).should == {"a" => 8, "b" => 9}
-    end
-
-    it "7 << 5を渡すと、tag_byteはEXTERN_STRINGになる" do
-      sio = StringIO.new(([(7 << 5) | 0] + [(1 << 5) | 3] + "あいa".unpack("C*") + [(7 << 5) | 1]).pack("C*"))
-      @reader.set_sio(sio)
-      @reader.send(:read_val).should == "あいa"
-      @reader.send(:read_val).should == "あいa"
-    end
-
+#    it "5 << 5を渡すと、tag_byteはORDERED_MAPになる" do
+#      arr = [(5 << 5) | 2] + [(1 << 5) | 1] + "a".unpack("C*") + [JavaBin::BYTE, 8] + [(1 << 5) | 1] + "b".unpack("C*") + [JavaBin::BYTE, 9]
+#      @reader.set_sio(StringIO.new(arr.pack("C*")))
+#      @reader.send(:read_val).should == {"a" => 8, "b" => 9}
+#    end
+#
+#    it "7 << 5を渡すと、tag_byteはEXTERN_STRINGになる" do
+#      sio = StringIO.new(([(7 << 5) | 0] + [(1 << 5) | 3] + "あいa".unpack("C*") + [(7 << 5) | 1]).pack("C*"))
+#      @reader.set_sio(sio)
+#      @reader.send(:read_val).should == "あいa"
+#      @reader.send(:read_val).should == "あいa"
+#    end
   end
 
 end
