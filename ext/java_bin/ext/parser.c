@@ -101,7 +101,7 @@ static VALUE JavaBinParser_read_byte(JAVA_BIN_PARSER* ptr) {
 static VALUE JavaBinParser_read_short(JAVA_BIN_PARSER* ptr) {
   u_int16_t c;
   c = _readnumeric(ptr, c);
-  c = _swap_16(c); /* TODO cpuによって違うはず */
+  c = _swap_16(c);
   return INT2NUM(*((int16_t*)&c));
 }
 
