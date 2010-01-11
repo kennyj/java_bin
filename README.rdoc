@@ -14,9 +14,8 @@ This is a Solr JavaBin format implementation for Ruby.
 
 === References
 
-* original resource
-** http://wiki.apache.org/solr/javabin
-** http://svn.apache.org/viewvc/lucene/solr/trunk/src/common/org/apache/solr/common/util/JavaBinCodec.java?view=markup
+* http://wiki.apache.org/solr/javabin
+* http://svn.apache.org/viewvc/lucene/solr/trunk/src/common/org/apache/solr/common/util/JavaBinCodec.java?view=markup
  
 === Author
 
