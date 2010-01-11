@@ -11,8 +11,3 @@
 * builder(writer)作成
 * JRuby support
 
-* -cacheの動的確保-
-* -swapの環境判定-
-* -テストケース(spec修正)-
-* -ruby1.8/1.9対応-
-* -header/libの依存解決(extconf.rb)-
