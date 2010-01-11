@@ -174,17 +174,17 @@ describe JavaBin::Reader do
 #      @reader.send(:read_val).should == array
 #    end
 #
-    it "13と大きなサイズのバイナリを渡すと、tag_byteはBYTEARRになる" do
-      array = [0,1,255] * 100
-      sio = StringIO.new
-      sio.putc JavaBin::BYTEARR
-      write_v_int(array.size, sio)
-      array.each { |e| sio.putc e }
-      sio.pos = 0
-      @reader.set_sio(sio)
-      @reader.send(:read_val).should == array
-    end
-
+#    it "13と大きなサイズのバイナリを渡すと、tag_byteはBYTEARRになる" do
+#      array = [0,1,255] * 100
+#      sio = StringIO.new
+#      sio.putc JavaBin::BYTEARR
+#      write_v_int(array.size, sio)
+#      array.each { |e| sio.putc e }
+#      sio.pos = 0
+#      @reader.set_sio(sio)
+#      @reader.send(:read_val).should == array
+#    end
+#
 #    it "14を渡すと、配列が返ってくる" do
 #      @reader.set_sio(StringIO.new([JavaBin::ITERATOR,
 #                                       JavaBin::BYTE, 0,
@@ -206,28 +206,28 @@ describe JavaBin::Reader do
 #      @reader.send(:read_val).should == "あい"
 #    end
 #
-    it "1 << 5と長い文字列を渡すと、tag_byteはSTRになる" do
-      pending
-    end
-
-    it "2 << 5を渡すと" do
-      pending
-    end
-
-    it "3 << 5を渡すと" do
-      pending "long/intの違い大丈夫か？"
-    end
-
+#    it "1 << 5と長い文字列を渡すと、tag_byteはSTRになる" do
+#      pending
+#    end
+#
+#    it "2 << 5を渡すと" do
+#      pending
+#    end
+#
+#    it "3 << 5を渡すと" do
+#      pending "long/intの違い大丈夫か？"
+#    end
+#
 #    it "4 << 5を渡すと、tag_byteはARRになる" do
 #      sio = StringIO.new([(4 << 5) | 2, JavaBin::BYTE, 3, JavaBin::BYTE, 4].pack("C*"))
 #      @reader.set_sio(sio)
 #      @reader.send(:read_val).should == [3, 4]      
 #    end
- 
-    it "4 << 5と大きな配列を渡すと、tag_byteはARRになる" do
-      pending
-    end
-
+# 
+#    it "4 << 5と大きな配列を渡すと、tag_byteはARRになる" do
+#      pending
+#    end
+#
 #    it "5 << 5を渡すと、tag_byteはORDERED_MAPになる" do
 #      arr = [(5 << 5) | 2] + [(1 << 5) | 1] + "a".unpack("C*") + [JavaBin::BYTE, 8] + [(1 << 5) | 1] + "b".unpack("C*") + [JavaBin::BYTE, 9]
 #      @reader.set_sio(StringIO.new(arr.pack("C*")))

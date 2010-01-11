@@ -21,6 +21,20 @@ class TestJavaBin < Test::Unit::TestCase
     output.putc(i)
   end
 
+  def write_tag(tag, size, output)
+    if ((tag & 0xe0) != 0)
+      if (size < 0x1f)
+        output.putc(tag | size)
+      else
+ 	output.putc(tag | 0x1f)
+ 	write_v_int(size - 0x1f, output)
+      end 
+    else
+      output.putc(tag)
+      write_v_int(size, output)
+    end
+  end
+
   public
   def setup
     @parser = JavaBin.parser.new
@@ -110,6 +124,17 @@ class TestJavaBin < Test::Unit::TestCase
     assert_equal array, @parser.parse([1, 13, array.size, *array].pack("C*"))
   end
 
+  def test_large_bytearr
+    array = [0,1,255] * 100
+    sio = StringIO.new
+    sio.putc 1 #VERSION
+    sio.putc 13 #JavaBin::BYTEARR
+    write_v_int(array.size, sio)
+    array.each { |e| sio.putc e }
+    sio.pos = 0
+    assert_equal array, @parser.parse(sio.read) 
+  end
+
   def test_iterator
     assert_equal([0, 127, nil, true], @parser.parse([1, 14, 3, 0, 3, 127, 0, 1,15].pack("C*")))
   end
@@ -122,19 +147,37 @@ class TestJavaBin < Test::Unit::TestCase
   end
 
   def test_long_string
-    flunk("not implemented yet.")
+    str = "0123456789" * 100
+    sio = StringIO.new
+    sio.putc 1 #VERSION
+    write_tag(1 << 5, str.size, sio)
+    str.each_byte { |e| sio.putc e }
+    sio.pos = 0
+    assert_equal str, @parser.parse(sio.read)
   end
 
   def test_sint
-    flunk("not implemented yet.")
+    assert_equal 8, @parser.parse([1, (2 << 5) | 8].pack("C*"))
+    # flunk("not implemented yet.")
   end
 
   def test_slong
-    flunk("not implemented yet.")
+    assert_equal 8, @parser.parse([1, (3 << 5) | 8].pack("C*"))
+    # flunk("not implemented yet.")
   end
 
   def test_arr
     assert_equal [3, 4], @parser.parse([1, (4 << 5) | 2, 3, 3, 3, 4].pack("C*"))
+  end
+
+  def test_large_arr
+    array = [0, 1, 2, 3, 4] * 100
+    sio = StringIO.new
+    sio.putc 1 #VERSION
+    write_tag(4 << 5, array.size, sio)
+    array.each { |e| sio.putc 3; sio.putc e }
+    sio.pos = 0
+    assert_equal array, @parser.parse(sio.read)
   end
 
   def test_ordered_map
