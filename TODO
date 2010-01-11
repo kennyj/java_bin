@@ -3,6 +3,7 @@
 ** rsolr/solr-rubyのmonkey-patch
 * builder作成
 * hashのキーをsymbolにする
+* Windowsでのビルド確認
 * ドキュメント
 * LGPLとの関係を確認する
 
