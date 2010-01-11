@@ -8,6 +8,7 @@
 
 * 他のgemの依存関係
 ** rsolr/solr-rubyのmonkey-patch
-
+* builder作成
+* hashのキーをsymbolにする
 * ドキュメント
 * LGPLとの関係を確認する
