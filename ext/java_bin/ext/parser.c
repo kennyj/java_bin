@@ -335,7 +335,7 @@ static VALUE rb_cParser_parse(VALUE self, VALUE data) {
   return JavaBinParser_read_val(ptr);
 }
 
-static VALUE rb_cParser_init(VALUE self) {
+static VALUE rb_cParser_initialize(VALUE self) {
   JAVA_BIN_PARSER* ptr;
 
   /* データの初期化 */
@@ -365,7 +365,7 @@ void Init_parser(void) {
   /* メモリーアロケーター設定 */
   rb_define_alloc_func(rb_cParser, JavaBinParser_alloc);
   /* コンストラクタ */
-  rb_define_method(rb_cParser, "initialize", rb_cParser_init, 0);
+  rb_define_method(rb_cParser, "initialize", rb_cParser_initialize, 0);
   /* parseメソッド*/
   rb_define_method(rb_cParser, "parse", rb_cParser_parse, 1);
 }

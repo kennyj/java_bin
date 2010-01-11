@@ -129,6 +129,6 @@ static void JavaBinParser_free(JAVA_BIN_PARSER* ptr);
 static VALUE JavaBinParser_alloc(VALUE klass);
 static void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr);
 static VALUE rb_cParser_parse(VALUE self, VALUE data);
-static VALUE rb_cParser_init(VALUE self);
+static VALUE rb_cParser_initialize(VALUE self);
 
 #endif /* _PARSER_H_ */
