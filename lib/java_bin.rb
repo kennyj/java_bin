@@ -7,9 +7,10 @@ module JavaBin
   end
  
   require 'java_bin/version'
-#  begin
+  begin
     require 'java_bin/ext'
-#  rescue LoadError
-#    require 'java_bin/pure'
-#  end
+  rescue LoadError
+    require 'java_bin/pure'
+  end
+
 end
