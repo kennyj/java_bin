@@ -35,6 +35,17 @@ class TestJavaBin < Test::Unit::TestCase
     end
   end
 
+  def elapsed_time(name, t, &block)
+    GC.start
+    s = Time.now
+    t.times {
+      block.call
+    }
+    e = Time.now
+    puts "#{name}#{t} times. elapsed time #{e - s}"
+    (e - s)
+  end
+
   public
   def setup
     @parser = JavaBin.parser.new
@@ -52,6 +63,16 @@ class TestJavaBin < Test::Unit::TestCase
     assert result['response']['docs'][0]['features'].include?('eaiou with umlauts: ëäïöü')
     assert_equal result['response']['docs'][1]['incubationdate_dt'], Time.local(2006, 1, 17, 9, 0, 0)
     assert_equal result['response']['docs'][1]['score'], 0.5030758380889893 
+  end
+
+  TIMES = 5000
+  def test_javabin_parse_and_ruby_eval
+    jb = open("fixtures/javabin.dat", "r:utf-8").read
+    r  = open("fixtures/ruby.dat", "r:utf-8").read
+    puts ""
+    r_et  = elapsed_time("ruby parse.    ", TIMES) { eval(r) }
+    jb_et = elapsed_time("javabin parse. ", TIMES) { @parser.parse(jb) }
+    assert jb_et * 3 > r
   end
 
   def test_null

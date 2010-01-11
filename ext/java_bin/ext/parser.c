@@ -274,7 +274,7 @@ static void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr) {
   _EXTERN_STRING_INFO* newP;
   int next_size;
   if (ptr->cache == NULL) {
-    next_size = 32;
+    next_size = 64;
   } else {
     next_size = ptr->cache_size * 2;
   }
