@@ -44,7 +44,7 @@ class TestJavaBin < Test::Unit::TestCase
     assert @parser.parse([1, 1].pack("C*"))
   end
   def test_invalid_version
-    assert_raise { @parser.parse([2].pack("C*")) }
+    assert_raise(RuntimeError) { @parser.parse([2].pack("C*")) }
   end
 
   def test_javabin_dat

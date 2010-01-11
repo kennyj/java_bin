@@ -287,11 +287,16 @@ static VALUE rb_cParser_parse(VALUE self, VALUE data) {
 
   //  ptr->data = (unsigned char*) malloc(dataLen);
   //  if (!ptr->data) {
-  //    rb_raise(rb_eRuntimeError, "JavaBinReader_alloc - allocate error");
+  //    rb_raise(rb_eRuntimeError, "rb_cParser_parse - allocate error");
   //  }
   //  memcpy(ptr->data, ptrData, dataLen);
   ptr->data = (unsigned char*)ptrData;
   ptr->data_len = dataLen;
+
+  /* version check */
+  if (ptr->data[0] != 0x01) {
+    rb_raise(rb_eRuntimeError, "rb_cParser_parse - not supported version");
+  }
 
   ptr->current  = 1;   /* VERSIONをとばした */
   ptr->tag_byte = 0;
