@@ -260,8 +260,10 @@ static VALUE JavaBinParser_read_val(JAVA_BIN_PARSER* ptr) {
 
 static void JavaBinParser_free(JAVA_BIN_PARSER* ptr) {
   if (ptr) {
-    // free(ptr->data);
-    free(ptr->cache);
+    //free(ptr->data);
+    if (ptr->cache) {
+      free(ptr->cache);
+    }
     free(ptr);
   }
 }
@@ -311,11 +313,11 @@ static VALUE rb_cParser_parse(VALUE self, VALUE data) {
     rb_raise(rb_eRuntimeError, "rb_cParser_parse - data is empty.");
   }
 
-  //  ptr->data = (unsigned char*) malloc(dataLen);
-  //  if (!ptr->data) {
-  //    rb_raise(rb_eRuntimeError, "rb_cParser_parse - allocate error");
-  //  }
-  //  memcpy(ptr->data, ptrData, dataLen);
+  //ptr->data = (unsigned char*) malloc(dataLen);
+  //if (!ptr->data) {
+  //  rb_raise(rb_eRuntimeError, "rb_cParser_parse - allocate error");
+  //}
+  //memcpy(ptr->data, ptrData, dataLen);
   ptr->data = (unsigned char*)ptrData;
   ptr->data_len = dataLen;
 
@@ -344,6 +346,10 @@ static VALUE rb_cParser_initialize(VALUE self) {
     rb_raise(rb_eRuntimeError, "rb_cParser_initialize - allocate error");
   }
   DATA_PTR(self) = ptr;
+
+  /* 参照文字列の準備(ここでも初期化しておかないと、たまにsegしちゃいますruby 1.8.7) */
+  ptr->cache = NULL;
+  ptr->cache_index = 0;
  
   return self;
 }
@@ -361,7 +367,7 @@ void Init_parser(void) {
   rb_mJavaBin = rb_define_module("JavaBin");
   rb_mExt     = rb_define_module_under(rb_mJavaBin, "Ext");
   rb_cParser  = rb_define_class_under(rb_mExt, "Parser", rb_cObject);
-
+  
   /* メモリーアロケーター設定 */
   rb_define_alloc_func(rb_cParser, JavaBinParser_alloc);
   /* コンストラクタ */
