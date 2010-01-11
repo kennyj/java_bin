@@ -70,9 +70,9 @@ class TestJavaBin < Test::Unit::TestCase
     jb = open("fixtures/javabin.dat", "r:utf-8").read
     r  = open("fixtures/ruby.dat", "r:utf-8").read
     puts ""
-    r_et  = elapsed_time("ruby parse.    ", TIMES) { eval(r) }
-    jb_et = elapsed_time("javabin parse. ", TIMES) { @parser.parse(jb) }
-    assert jb_et * 3 > r_et
+    r_et  = elapsed_time("ruby eval parse. ", TIMES) { eval(r) }
+    jb_et = elapsed_time("javabin parse.   ", TIMES) { @parser.parse(jb) }
+    assert (jb_et * 3) < r_et
   end
 
   def test_null
