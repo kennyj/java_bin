@@ -197,10 +197,15 @@ module JavaBin
           b = getbyte
           if ((b & 0x80) == 0)
             str << b
-          elsif ((b & 0xE0) != 0xE0)
-            str << (((b & 0x1F) << 6) | (getbyte & 0x3F))
+          elsif ((b & 0xE0) == 0xC0)
+            #str << (((b & 0x1F) << 6) | (getbyte & 0x3F))
+            str << b
+            str << getbyte
           else
-            str << (((b & 0x0F) << 12) | ((getbyte & 0x3F) << 6) | (getbyte & 0x3F))
+            #str << (((b & 0x0F) << 12) | ((getbyte & 0x3F) << 6) | (getbyte & 0x3F))
+            str << b
+            str << getbyte
+            str << getbyte
           end
         }
         str.force_encoding('utf-8') if str.respond_to? :force_encoding
