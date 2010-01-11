@@ -17,9 +17,6 @@
 
 #ifdef HAVE_RUBY_ENCODING_H
 #include <ruby/encoding.h>
-#define FORCE_UTF8(obj) rb_enc_associate((obj), rb_utf8_encoding())
-#else
-#define FORCE_UTF8(obj)
 #endif /* HAVE_RUBY_ENCODING_H */
 
 /*
@@ -85,7 +82,7 @@ typedef struct java_bin_reader {
   int                 last_string_offset;
   int                 last_string_len;
 
-} JAVA_BIN_READER;
+} JAVA_BIN_PARSER;
 
 #ifdef HAVE_RUBY_ENCODING_H
 #define _utf8_string(str, len) (rb_enc_str_new(str, len, rb_encUtf8))
@@ -102,22 +99,22 @@ typedef struct java_bin_reader {
      _skipbytes(ptr, sizeof(c)); c; \
    })
 
-static int32_t JavaBinReader_read_v_int(JAVA_BIN_READER* ptr);
-static int64_t JavaBinReader_read_v_long(JAVA_BIN_READER* ptr);
-static int JavaBinReader_read_size(JAVA_BIN_READER* ptr);
-static VALUE JavaBinReader_read_small_int(JAVA_BIN_READER* ptr);
-static VALUE JavaBinReader_read_small_long(JAVA_BIN_READER* ptr);
-static VALUE JavaBinReader_read_string(JAVA_BIN_READER* ptr);
-static VALUE _read_byte(JAVA_BIN_READER* ptr);
-static VALUE _read_short(JAVA_BIN_READER* ptr);
-static VALUE _read_int(JAVA_BIN_READER* ptr);
-static VALUE _read_long(JAVA_BIN_READER* ptr);
-static VALUE _read_date(JAVA_BIN_READER* ptr);
-static VALUE _read_float(JAVA_BIN_READER* ptr);
-static VALUE _read_double(JAVA_BIN_READER* ptr);
-static VALUE JavaBinReader_read_val(JAVA_BIN_READER* ptr);
-static void JavaBinReader_free(JAVA_BIN_READER* ptr);
-static VALUE JavaBinReader_alloc(VALUE klass);
+static int32_t JavaBinParser_read_v_int(JAVA_BIN_PARSER* ptr);
+static int64_t JavaBinParser_read_v_long(JAVA_BIN_PARSER* ptr);
+static int JavaBinParser_read_size(JAVA_BIN_PARSER* ptr);
+static VALUE JavaBinParser_read_small_int(JAVA_BIN_PARSER* ptr);
+static VALUE JavaBinParser_read_small_long(JAVA_BIN_PARSER* ptr);
+static VALUE JavaBinParser_read_string(JAVA_BIN_PARSER* ptr);
+static VALUE _read_byte(JAVA_BIN_PARSER* ptr);
+static VALUE _read_short(JAVA_BIN_PARSER* ptr);
+static VALUE _read_int(JAVA_BIN_PARSER* ptr);
+static VALUE _read_long(JAVA_BIN_PARSER* ptr);
+static VALUE _read_date(JAVA_BIN_PARSER* ptr);
+static VALUE _read_float(JAVA_BIN_PARSER* ptr);
+static VALUE _read_double(JAVA_BIN_PARSER* ptr);
+static VALUE JavaBinParser_read_val(JAVA_BIN_PARSER* ptr);
+static void JavaBinParser_free(JAVA_BIN_PARSER* ptr);
+static VALUE JavaBinParser_alloc(VALUE klass);
 static VALUE rb_cParser_parse(VALUE self, VALUE data);
 static VALUE rb_cParser_init(VALUE self);
 
