@@ -11,8 +11,7 @@ module JavaBin
   begin
     require 'java_bin/ext'
   rescue LoadError => e
-puts e
-#    require 'java_bin/pure'
+    require 'java_bin/pure'
   end
 
 end
