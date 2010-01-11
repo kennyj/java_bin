@@ -5,17 +5,18 @@
 
 Gem::Specification.new do |s|
   s.name = %q{java_bin}
-  s.version = ""
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["kennyj"]
-  s.date = %q{2010-01-09}
-  s.description = %q{TODO: longer description of your gem}
+  s.date = %q{2010-01-11}
+  s.description = %q{Solr JavaBin format implementation for Ruby.}
   s.email = %q{kennyj@gmail.com}
-  s.extensions = ["ext/extconf.rb"]
+  s.extensions = ["ext/java_bin/ext/extconf.rb"]
   s.extra_rdoc_files = [
     "LICENSE",
-     "README.rdoc"
+     "README.rdoc",
+     "TODO"
   ]
   s.files = [
     ".document",
@@ -23,19 +24,33 @@ Gem::Specification.new do |s|
      "LICENSE",
      "README.rdoc",
      "Rakefile",
+     "TODO",
      "VERSION",
+     "ext/java_bin/ext/extconf.rb",
+     "ext/java_bin/ext/parser.c",
+     "ext/java_bin/ext/parser.h",
+     "fixtures/javabin.dat",
+     "fixtures/json.dat",
+     "fixtures/ruby.dat",
      "java_bin.gemspec",
      "lib/java_bin.rb",
+     "lib/java_bin/ext.rb",
+     "lib/java_bin/ext/.keep",
+     "lib/java_bin/pure.rb",
+     "lib/java_bin/pure/parser.rb",
+     "lib/java_bin/version.rb",
      "test/helper.rb",
-     "test/test_java_bin.rb"
+     "test/test_java_bin_parser.rb",
+     "test/xxx_performance.rb"
   ]
   s.homepage = %q{http://github.com/kennyj/java_bin}
   s.rdoc_options = ["--charset=UTF-8"]
-  s.require_paths = ["lib"]
+  s.require_paths = ["lib", "ext"]
   s.rubygems_version = %q{1.3.5}
-  s.summary = %q{TODO: one-line summary of your gem}
+  s.summary = %q{Solr JavaBin format implementation for Ruby.}
   s.test_files = [
-    "test/test_java_bin.rb",
+    "test/xxx_performance.rb",
+     "test/test_java_bin_parser.rb",
      "test/helper.rb"
   ]
 
