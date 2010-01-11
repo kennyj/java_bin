@@ -10,7 +10,7 @@ else
   require 'java_bin/ext'
 end
 
-class TestJavaBin < Test::Unit::TestCase
+class TestJavaBinParser < Test::Unit::TestCase
 
   private
   def write_v_int(i, output)
