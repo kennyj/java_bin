@@ -341,7 +341,7 @@ static VALUE rb_cParser_initialize(VALUE self) {
   /* データの初期化 */
   ptr = (JAVA_BIN_PARSER*) malloc(sizeof(JAVA_BIN_PARSER));
   if (!ptr) {
-    rb_raise(rb_eRuntimeError, "rb_cParser_init - allocate error");
+    rb_raise(rb_eRuntimeError, "rb_cParser_initialize - allocate error");
   }
   DATA_PTR(self) = ptr;
  
