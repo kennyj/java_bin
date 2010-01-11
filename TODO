@@ -1,3 +1,4 @@
+* ChangeLogを準備
 * 他のgemの依存関係
 ** rsolr/solr-rubyのmonkey-patch
 * hashのキーをsymbolにする
