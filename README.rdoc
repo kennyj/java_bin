@@ -27,6 +27,21 @@ This is a Solr JavaBin format implementation for Ruby.
 
 * With RSolr 
 
+== TODO
+
+* more parse speed
+* write test environment
+* write usage
+* rsolr/solr-ruby integration code
+* license
+* hashのキーをsymbolにする. freezeする等での改善
+* windows build
+* more testcase
+** large size
+** ruby 1.8.x/1.9.x compat
+* builder(writer)作成
+* JRuby support
+
 == References
 
 * http://wiki.apache.org/solr/javabin
