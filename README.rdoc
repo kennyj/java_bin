@@ -36,9 +36,7 @@ This is a Solr JavaBin format implementation for Ruby.
 * license
 * hashのキーをsymbolにする. freezeする等での改善
 * windows build
-* more testcase
-** large size
-** ruby 1.8.x/1.9.x compat
+* more testcase(large size, ruby 1.8.x/1.9.x compat)
 * builder(writer)作成
 * JRuby support
 
