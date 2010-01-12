@@ -329,6 +329,14 @@ static VALUE rb_cParser_parse(VALUE self, VALUE data) {
   ptr->current  = 1;   /* VERSIONをとばした */
   ptr->tag_byte = 0;
 
+  /*
+   * 参照文字列既に確保している場合は解放
+   * HINT. インスタンスを使いまわす時に発生する
+   */
+  if (ptr->cache) {
+    free(ptr->cache);
+  }
+
   /* 参照文字列の準備 */
   ptr->cache = NULL;
   ptr->cache_index = 0;
