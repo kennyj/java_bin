@@ -12,10 +12,21 @@ This is a Solr JavaBin format implementation for Ruby.
   (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
+== Requirements
+
+* Ruby1.8.6 or later (include 1.9.x)
+* (recommended) C compiler: you can alos use java_bin without c extension, but 'pure' is 30 times slower than 'ext'.
+
 == Install
 
-gem install java_bin
- 
+ gem install java_bin
+
+== Usage
+
+* With Solr-Ruby
+
+* With RSolr 
+
 == References
 
 * http://wiki.apache.org/solr/javabin
