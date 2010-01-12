@@ -1,0 +1,18 @@
+0.1.2 (2010/01/12)
+  * fix memory leak error (extern string).
+
+  Example.
+    # OK
+    x.times {
+      @parser = JavaBin.parser.new
+      @parser.parse(xxx...)
+    }
+
+    # BAD!
+    @parser = JavaBin.parser.new
+    x.times {
+      @parser.parse(xxx...)
+    }
+
+  * fix segv problem (extern string).
+  * ruby 1.8.7/1.9.2pre1 all green.
