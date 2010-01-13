@@ -59,7 +59,6 @@ This is a Apache Solr JavaBin format (binary format) implementation for Ruby.
 * more parse speed
 * license
 * windows build
-* more testcase(large size, ruby 1.8.x/1.9.x compat)
 * builder(writer)作成
 * JRuby support
 
