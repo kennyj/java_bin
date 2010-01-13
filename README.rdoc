@@ -28,11 +28,12 @@ This is a Solr JavaBin format implementation for Ruby.
  require 'rubygems'
  require 'java_bin'
 
- result = JavaBin.parser.parse( java bin format string )
+ @parser = JavaBin.parser.new
+ result = @parser.parse( java bin format string )
 
 === With RSolr/Solr-Ruby
 
- By RSolr/Solr-Ruby support, a parser automatically uses javabin format instead of ruby format.
+* By RSolr/Solr-Ruby support, a parser automatically uses javabin format instead of ruby format.
 
 == TODO
 
