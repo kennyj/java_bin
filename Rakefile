@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "java_bin"
-    gem.summary = %Q{Solr JavaBin format implementation for Ruby.}
-    gem.description = %Q{Solr JavaBin format implementation for Ruby.}
+    gem.summary = %Q{Apache Solr JavaBin format implementation for Ruby.}
+    gem.description = %Q{Apache Solr JavaBin format (binary format) implementation for Ruby.}
     gem.email = "kennyj@gmail.com"
     gem.homepage = "http://github.com/kennyj/java_bin"
     gem.authors = ["kennyj"]

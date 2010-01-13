@@ -304,6 +304,10 @@ static VALUE rb_cParser_parse(VALUE self, VALUE data) {
   Data_Get_Struct(self, JAVA_BIN_PARSER, ptr);
 
   /* 引数処理 */
+  if (TYPE(data) != T_STRING) {
+    rb_raise(rb_eRuntimeError, "rb_cParser_parse - data is not String.");
+  }
+
   SafeStringValue(data);
   ptrData = RSTRING_PTR(data);
   dataLen = RSTRING_LEN(data);
@@ -328,6 +332,14 @@ static VALUE rb_cParser_parse(VALUE self, VALUE data) {
 
   ptr->current  = 1;   /* VERSIONをとばした */
   ptr->tag_byte = 0;
+
+  /*
+   * 参照文字列既に確保している場合は解放
+   * HINT. インスタンスを使いまわす時に発生する
+   */
+  if (ptr->cache) {
+    free(ptr->cache);
+  }
 
   /* 参照文字列の準備 */
   ptr->cache = NULL;

@@ -87,6 +87,15 @@ class TestJavaBinParser < Test::Unit::TestCase
     assert (jb_et * 2) < r_et if @parser.is_a? JavaBin::Ext::Parser
   end
 
+  def test_memory_allocate
+    (TIMES * 5).times {
+      @parser.parse([1, 0].pack("C*"))
+    }
+    (TIMES * 5).times {
+      @parser = JavaBin.parser.new
+      @parser.parse([1, 0].pack("C*"))
+    }
+  end
 
   def test_null
     assert_nil @parser.parse([1, 0].pack("C*"))

@@ -71,7 +71,7 @@ typedef struct _extern_string_info {
 /*
  * 読込処理データ保持構造体
  */
-typedef struct java_bin_reader {
+typedef struct java_bin_parser {
   unsigned char* data;
   int            data_len;
   int            current;
@@ -83,7 +83,6 @@ typedef struct java_bin_reader {
   int                  cache_index;
   int                  last_string_offset;
   int                  last_string_len;
-
 } JAVA_BIN_PARSER;
 
 #ifdef HAVE_RUBY_ENCODING_H

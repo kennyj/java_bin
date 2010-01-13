@@ -15,3 +15,8 @@ module JavaBin
   end
 
 end
+
+# monkey patching
+require "rsolr_support"
+require "solr_ruby_support"
+

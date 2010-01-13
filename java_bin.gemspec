@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{java_bin}
-  s.version = "0.1.0"
+  s.version = "0.1.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["kennyj"]
-  s.date = %q{2010-01-11}
+  s.date = %q{2010-01-12}
   s.description = %q{Solr JavaBin format implementation for Ruby.}
   s.email = %q{kennyj@gmail.com}
   s.extensions = ["ext/java_bin/ext/extconf.rb"]
@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.files = [
     ".document",
      ".gitignore",
+     "CHANGELOG",
      "LICENSE",
      "README.rdoc",
      "Rakefile",
