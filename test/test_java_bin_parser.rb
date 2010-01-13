@@ -66,6 +66,12 @@ class TestJavaBinParser < Test::Unit::TestCase
     assert_equal result['response']['docs'][1]['score'], 0.5030758380889893 
   end
 
+  def test_javabin2_dat
+    result = @parser.parse(open("fixtures/javabin2.dat", "r:utf-8").read)
+    assert_equal 19, result['response']['docs'].size
+  end
+
+
   TIMES = 5000
   def test_javabin_parse_and_ruby_eval
     r  = open("fixtures/ruby.dat", "r:utf-8").read
@@ -74,7 +80,7 @@ class TestJavaBinParser < Test::Unit::TestCase
     r_et  = elapsed_time("ruby eval parse. ", TIMES) { eval(r) }
     jb_et = elapsed_time("javabin parse.   ", TIMES) { @parser.parse(jb) }
     puts("#{r_et/jb_et} times")
-    assert (jb_et * 2) < r_et if @parser.is_a? JavaBin::Ext::Parser
+    assert (jb_et * 2.5) < r_et if @parser.is_a? JavaBin::Ext::Parser
   end
 
   def test_javabin2_parse_and_ruby2_eval
@@ -84,7 +90,7 @@ class TestJavaBinParser < Test::Unit::TestCase
     r_et  = elapsed_time("ruby2 eval parse. ", TIMES) { eval(r) }
     jb_et = elapsed_time("javabin2 parse.   ", TIMES) { @parser.parse(jb) }
     puts("#{r_et/jb_et} times")
-    assert (jb_et * 2) < r_et if @parser.is_a? JavaBin::Ext::Parser
+    assert (jb_et * 2.5) < r_et if @parser.is_a? JavaBin::Ext::Parser
   end
 
   def test_memory_allocate
