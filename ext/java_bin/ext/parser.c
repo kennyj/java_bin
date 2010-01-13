@@ -304,6 +304,10 @@ static VALUE rb_cParser_parse(VALUE self, VALUE data) {
   Data_Get_Struct(self, JAVA_BIN_PARSER, ptr);
 
   /* 引数処理 */
+  if (TYPE(data) != T_STRING) {
+    rb_raise(rb_eRuntimeError, "rb_cParser_parse - data is not String.");
+  }
+
   SafeStringValue(data);
   ptrData = RSTRING_PTR(data);
   dataLen = RSTRING_LEN(data);
