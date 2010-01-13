@@ -23,17 +23,20 @@ This is a Solr JavaBin format implementation for Ruby.
  gem sources -a http://gemcutter.org
  gem install java_bin
 
-== Usage
+== Simple Usage
 
-* With Solr-Ruby
+ require 'rubygems'
+ require 'java_bin'
 
-* With RSolr 
+ result = JavaBin.parser.parse( java bin format string )
+
+=== With RSolr/Solr-Ruby
+
+ By RSolr/Solr-Ruby support, a parser automatically uses javabin format instead of ruby format.
 
 == TODO
 
 * more parse speed
-* rsolr/solr-ruby integration code
-* write usage
 * license
 * hashのキーをsymbolにする. freezeする等での改善
 * windows build
@@ -43,9 +46,11 @@ This is a Solr JavaBin format implementation for Ruby.
 
 == References
 
-* http://wiki.apache.org/solr/javabin
-* http://svn.apache.org/viewvc/lucene/solr/trunk/src/common/org/apache/solr/common/util/JavaBinCodec.java?view=markup
- 
+* javabin http://wiki.apache.org/solr/javabin
+* javabin codec (for java) http://svn.apache.org/viewvc/lucene/solr/trunk/src/common/org/apache/solr/common/util/JavaBinCodec.java?view=markup
+* rsolr http://github.com/mwmitchell/rsolr/
+* solr-ruby http://wiki.apache.org/solr/solr-ruby
+
 == Author
 
 Toshinori Kajihara <mailto:kennyj@gmail.com>
