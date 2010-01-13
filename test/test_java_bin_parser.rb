@@ -68,13 +68,25 @@ class TestJavaBinParser < Test::Unit::TestCase
 
   TIMES = 5000
   def test_javabin_parse_and_ruby_eval
-    jb = open("fixtures/javabin.dat", "r:utf-8").read
     r  = open("fixtures/ruby.dat", "r:utf-8").read
+    jb = open("fixtures/javabin.dat", "r:utf-8").read
     puts ""
     r_et  = elapsed_time("ruby eval parse. ", TIMES) { eval(r) }
     jb_et = elapsed_time("javabin parse.   ", TIMES) { @parser.parse(jb) }
+    puts("#{r_et/jb_et} times")
     assert (jb_et * 2) < r_et if @parser.is_a? JavaBin::Ext::Parser
   end
+
+  def test_javabin2_parse_and_ruby2_eval
+    r  = open("fixtures/ruby2.dat", "r:utf-8").read
+    jb = open("fixtures/javabin2.dat", "r:utf-8").read
+    puts ""
+    r_et  = elapsed_time("ruby2 eval parse. ", TIMES) { eval(r) }
+    jb_et = elapsed_time("javabin2 parse.   ", TIMES) { @parser.parse(jb) }
+    puts("#{r_et/jb_et} times")
+    assert (jb_et * 2) < r_et if @parser.is_a? JavaBin::Ext::Parser
+  end
+
 
   def test_null
     assert_nil @parser.parse([1, 0].pack("C*"))
