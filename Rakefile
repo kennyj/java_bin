@@ -20,7 +20,7 @@ end
 
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test' << 'ext'
+  test.libs << 'test' << 'ext'
   test.pattern = 'test/**/test_*.rb'
   test.verbose = true
 end
