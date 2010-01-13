@@ -16,9 +16,11 @@ This is a Solr JavaBin format implementation for Ruby.
 
 * Ruby1.8.6 or later (include 1.9.x)
 * (recommended) C compiler: you can alos use java_bin without c extension, but 'pure' is 30 times slower than 'ext'.
+* JavaBin has been tested with MRI 1.8.7, REE 1.8.7, YARV 1.9.2 pre1 on Ubuntu Linux 9.10 (32bit), and Apache Solr 1.4  
 
 == Install
 
+ gem sources -a http://gemcutter.org
  gem install java_bin
 
 == Usage
@@ -30,9 +32,8 @@ This is a Solr JavaBin format implementation for Ruby.
 == TODO
 
 * more parse speed
-* write test environment
-* write usage
 * rsolr/solr-ruby integration code
+* write usage
 * license
 * hashのキーをsymbolにする. freezeする等での改善
 * windows build
