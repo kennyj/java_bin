@@ -1,16 +1,12 @@
 = java_bin
 
-This is a Solr JavaBin format implementation for Ruby.
+This is a Apache Solr JavaBin format (binary format) implementation for Ruby.
 
-== Note on Patches/Pull Requests
- 
-* Fork the project.
-* Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a
-  future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
-* Send me a pull request. Bonus points for topic branches.
+== Features
+
+* fast parse, and less network traffic.
+* rsolr/solr-ruby support
+* ruby 1.8/1.9 support
 
 == Requirements
 
@@ -39,7 +35,6 @@ This is a Solr JavaBin format implementation for Ruby.
 
 * more parse speed
 * license
-* hashのキーをsymbolにする. freezeする等での改善
 * windows build
 * more testcase(large size, ruby 1.8.x/1.9.x compat)
 * builder(writer)作成
@@ -51,6 +46,16 @@ This is a Solr JavaBin format implementation for Ruby.
 * javabin codec (for java) http://svn.apache.org/viewvc/lucene/solr/trunk/src/common/org/apache/solr/common/util/JavaBinCodec.java?view=markup
 * rsolr http://github.com/mwmitchell/rsolr/
 * solr-ruby http://wiki.apache.org/solr/solr-ruby
+
+== Note on Patches/Pull Requests
+ 
+* Fork the project.
+* Make your feature addition or bug fix.
+* Add tests for it. This is important so I don't break it in a
+  future version unintentionally.
+* Commit, do not mess with rakefile, version, or history.
+  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
+* Send me a pull request. Bonus points for topic branches.
 
 == Author
 
