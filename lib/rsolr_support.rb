@@ -1,6 +1,6 @@
 # RSolr support
 
-if define? RSolr::Client
+if defined? RSolr::Client
 
   class RSolr::Client
     protected
