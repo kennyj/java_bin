@@ -54,6 +54,13 @@ This is a Apache Solr JavaBin format (binary format) implementation for Ruby.
 
 * By RSolr/Solr-Ruby support, a parser automatically uses javabin format instead of ruby format.
 
+  require 'rubygems'
+  require 'rsolr'
+  require 'java_bin'
+
+  solr = RSolr.connect
+  solr.select :q => '*:*'
+
 == TODO
 
 * more parse speed
