@@ -5,8 +5,9 @@ This is a Apache Solr JavaBin format (binary format) implementation for Ruby.
 == Features
 
 * fast parse, and less network traffic.
-* rsolr/solr-ruby support
-* ruby 1.8/1.9 support
+* rsolr/solr-ruby support.
+* pure and c extension code.
+* ruby 1.8/1.9 support.
 
 == Requirements
 
