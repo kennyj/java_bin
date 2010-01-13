@@ -1,3 +1,6 @@
+0.2.0 (2010/01/14)
+  * add rsolr/solr-ruby support
+
 0.1.2 (2010/01/12)
   * fix memory leak error (extern string).
 
