@@ -48,7 +48,7 @@ This is an Apache Solr JavaBin format (binary format) implementation for Ruby.
  require 'java_bin'
 
  @parser = JavaBin.parser.new
- result = @parser.parse( java bin format string )
+ result = @parser.parse( javabin format string )
 
 === With RSolr/Solr-Ruby
 
