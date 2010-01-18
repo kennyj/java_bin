@@ -95,14 +95,14 @@ static VALUE JavaBinParser_read_string(JAVA_BIN_PARSER* ptr) {
 static VALUE JavaBinParser_read_byte(JAVA_BIN_PARSER* ptr) {
   int8_t c;
   c = _readnumeric(ptr, c);
-  return INT2NUM(*((int8_t*)&c));
+  return INT2FIX(*((int8_t*)&c));
 }
 
 static VALUE JavaBinParser_read_short(JAVA_BIN_PARSER* ptr) {
   u_int16_t c;
   c = _readnumeric(ptr, c);
   c = _swap_16(c);
-  return INT2NUM(*((int16_t*)&c));
+  return INT2FIX(*((int16_t*)&c));
 }
 
 static VALUE JavaBinParser_read_int(JAVA_BIN_PARSER* ptr) {
@@ -138,6 +138,27 @@ static VALUE JavaBinParser_read_double(JAVA_BIN_PARSER* ptr) {
   c = _readnumeric(ptr, c);
   c = _swap_64(c);
   return rb_float_new(*((double*)&c));
+}
+
+static void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr) {
+  _EXTERN_STRING_INFO* newP;
+  int next_size;
+  if (ptr->cache == NULL) {
+    next_size = 64;
+  } else {
+    next_size = ptr->cache_size * 2;
+  }
+
+  newP = (_EXTERN_STRING_INFO*) malloc(next_size * sizeof(_EXTERN_STRING_INFO));
+  if (!newP) {
+    rb_raise(rb_eRuntimeError, "JavaBinParser_extend_cache - allocate error");
+  }
+
+  if (ptr->cache) {
+    memcpy(newP, ptr->cache, sizeof(_EXTERN_STRING_INFO) * ptr->cache_size);
+  }
+  ptr->cache = newP;
+  ptr->cache_size = next_size;
 }
 
 static VALUE JavaBinParser_read_val(JAVA_BIN_PARSER* ptr) {
@@ -270,27 +291,6 @@ static void JavaBinParser_free(JAVA_BIN_PARSER* ptr) {
 
 static VALUE JavaBinParser_alloc(VALUE klass) {
   return Data_Wrap_Struct(klass, 0, JavaBinParser_free, NULL);
-}
-
-static void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr) {
-  _EXTERN_STRING_INFO* newP;
-  int next_size;
-  if (ptr->cache == NULL) {
-    next_size = 64;
-  } else {
-    next_size = ptr->cache_size * 2;
-  }
-
-  newP = (_EXTERN_STRING_INFO*) malloc(next_size * sizeof(_EXTERN_STRING_INFO));
-  if (!newP) {
-    rb_raise(rb_eRuntimeError, "JavaBinParser_extend_cache - allocate error");
-  }
-
-  if (ptr->cache) {
-    memcpy(newP, ptr->cache, sizeof(_EXTERN_STRING_INFO) * ptr->cache_size);
-  }
-  ptr->cache = newP;
-  ptr->cache_size = next_size;
 }
 
 /*
