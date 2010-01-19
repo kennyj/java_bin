@@ -2,24 +2,24 @@
 require 'mkmf'
 require 'rbconfig'
 
-unless $CFLAGS.gsub!(/ -O[\dsz]?/, ' -O3')
-  $CFLAGS << ' -O3'
-end
-if CONFIG['CC'] =~ /gcc/
-  $CFLAGS << ' -Wall'
-  #unless $CFLAGS.gsub!(/ -O[\dsz]?/, ' -O0 -ggdb')
-  #  $CFLAGS << ' -O0 -ggdb'
-  #end
+unless PLATFORM =~ /mswin32/ # Linux
+  unless $CFLAGS.gsub!(/ -O[\dsz]?/, ' -O3')
+    $CFLAGS << ' -O3'
+  end
+  if CONFIG['CC'] =~ /gcc/
+    $CFLAGS << ' -Wall'
+  end
+else # Windows 
+  $CFLAGS.gsub!(/-O2b2xg-/, '/O2b2x')
+  $CFLAGS.gsub!(/-MD/, ' /MT')
+  $CFLAGS.gsub!(/ -G6/, '')
+  $CFLAGS << ' /wd4819' # VC++はUTF-8 BOM無しは駄目なのでここで抑制. gccは逆にBOM付は駄目
 end
 
-if RUBY_VERSION >= '1.9'
-  $CFLAGS << ' -DRUBY_19'
-end
+$CFLAGS << ' -DRUBY_19' if RUBY_VERSION >= '1.9'
 
-have_header("endian.h")
 have_header("byteswap.h")
 have_header("sys/types.h")
-
 have_header("ruby.h")
 have_header("ruby/encoding.h")
 

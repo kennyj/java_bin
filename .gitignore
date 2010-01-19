@@ -24,3 +24,8 @@ Makefile
 *.so
 *.log
 *.orig
+*.def
+*.exp
+*.lib
+*.pdb
+*.obj

@@ -1,4 +1,3 @@
-/* utf-8 */
 #include "parser.h"
 
 /*
@@ -94,48 +93,48 @@ static VALUE JavaBinParser_read_string(JAVA_BIN_PARSER* ptr) {
 
 static VALUE JavaBinParser_read_byte(JAVA_BIN_PARSER* ptr) {
   int8_t c;
-  c = _readnumeric(ptr, c);
+  _readnumeric(ptr, c);
   return INT2FIX(*((int8_t*)&c));
 }
 
 static VALUE JavaBinParser_read_short(JAVA_BIN_PARSER* ptr) {
   u_int16_t c;
-  c = _readnumeric(ptr, c);
+  _readnumeric(ptr, c);
   c = _swap_16(c);
   return INT2FIX(*((int16_t*)&c));
 }
 
 static VALUE JavaBinParser_read_int(JAVA_BIN_PARSER* ptr) {
   u_int32_t c;
-  c = _readnumeric(ptr, c);
+  _readnumeric(ptr, c);
   c = _swap_32(c);
   return INT2NUM(*((int32_t*)&c));
 }
 
 static VALUE JavaBinParser_read_long(JAVA_BIN_PARSER* ptr) {
   u_int64_t c;
-  c = _readnumeric(ptr, c);
+  _readnumeric(ptr, c);
   c = _swap_64(c);
   return LL2NUM(*((int64_t*)&c));
 }
 
 static VALUE JavaBinParser_read_date(JAVA_BIN_PARSER* ptr) {
   u_int64_t c;
-  c = _readnumeric(ptr, c);
+  _readnumeric(ptr, c);
   c = _swap_64(c);
   return rb_funcall(rb_cTime, i_At, 1, ULL2NUM(*((int64_t*)&c) / 1000));
 }
 
 static VALUE JavaBinParser_read_float(JAVA_BIN_PARSER* ptr) {
   u_int32_t c;
-  c = _readnumeric(ptr, c);
+  _readnumeric(ptr, c);
   c = _swap_32(c);
   return rb_float_new((double)*((float*)&c));
 }
 
 static VALUE JavaBinParser_read_double(JAVA_BIN_PARSER* ptr) {
   u_int64_t c;
-  c = _readnumeric(ptr, c);
+  _readnumeric(ptr, c);
   c = _swap_64(c);
   return rb_float_new(*((double*)&c));
 }

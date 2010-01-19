@@ -1,4 +1,5 @@
 # vim:fileencoding=utf-8
+
 require 'stringio'
 require 'helper'
 
@@ -12,13 +13,15 @@ end
 
 class TestJavaBinParser < Test::Unit::TestCase
 
+  READ_FLAG = (RUBY_VERSION >= '1.9' ? 'r:utf-8' : 'rb')
+
   private
   def write_v_int(i, output)
-    while ((i & ~0x7F) != 0) 
+    while ((i & ~0x7F) != 0)
       output.putc(((i & 0x7f) | 0x80))
       # i >>>= 7
       i = (i >> 7) # TODO 論理シフト
-    end 
+    end
     output.putc(i)
   end
 
@@ -27,9 +30,9 @@ class TestJavaBinParser < Test::Unit::TestCase
       if (size < 0x1f)
         output.putc(tag | size)
       else
- 	output.putc(tag | 0x1f)
- 	write_v_int(size - 0x1f, output)
-      end 
+        output.putc(tag | 0x1f)
+        write_v_int(size - 0x1f, output)
+      end
     else
       output.putc(tag)
       write_v_int(size, output)
@@ -60,22 +63,22 @@ class TestJavaBinParser < Test::Unit::TestCase
   end
 
   def test_javabin_dat
-    result = @parser.parse(open("fixtures/javabin.dat", "r:utf-8").read)
+    result = @parser.parse(open("fixtures/javabin.dat", READ_FLAG).read)
     assert result['response']['docs'][0]['features'].include?('eaiou with umlauts: ëäïöü')
     assert_equal result['response']['docs'][1]['incubationdate_dt'], Time.local(2006, 1, 17, 9, 0, 0)
-    assert_equal result['response']['docs'][1]['score'], 0.5030758380889893 
+    assert_equal result['response']['docs'][1]['score'], 0.5030758380889893
   end
 
   def test_javabin2_dat
-    result = @parser.parse(open("fixtures/javabin2.dat", "r:utf-8").read)
+    result = @parser.parse(open("fixtures/javabin2.dat", READ_FLAG).read)
     assert_equal 19, result['response']['docs'].size
   end
 
 
   TIMES = 5000
   def test_javabin_parse_and_ruby_eval
-    r  = open("fixtures/ruby.dat", "r:utf-8").read
-    jb = open("fixtures/javabin.dat", "r:utf-8").read
+    r  = open("fixtures/ruby.dat", READ_FLAG).read
+    jb = open("fixtures/javabin.dat", READ_FLAG).read
     puts ""
     r_et  = elapsed_time("ruby eval parse. ", TIMES) { eval(r) }
     jb_et = elapsed_time("javabin parse.   ", TIMES) { @parser.parse(jb) }
@@ -84,8 +87,8 @@ class TestJavaBinParser < Test::Unit::TestCase
   end
 
   def test_javabin2_parse_and_ruby2_eval
-    r  = open("fixtures/ruby2.dat", "r:utf-8").read
-    jb = open("fixtures/javabin2.dat", "r:utf-8").read
+    r  = open("fixtures/ruby2.dat", READ_FLAG).read
+    jb = open("fixtures/javabin2.dat", READ_FLAG).read
     puts ""
     r_et  = elapsed_time("ruby2 eval parse. ", TIMES) { eval(r) }
     jb_et = elapsed_time("javabin2 parse.   ", TIMES) { @parser.parse(jb) }
@@ -185,7 +188,7 @@ class TestJavaBinParser < Test::Unit::TestCase
     write_v_int(array.size, sio)
     array.each { |e| sio.putc e }
     sio.pos = 0
-    assert_equal array, @parser.parse(sio.read) 
+    assert_equal array, @parser.parse(sio.read)
   end
 
   def test_iterator
