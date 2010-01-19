@@ -58,7 +58,6 @@ This is an Apache Solr JavaBin format (binary format) implementation for Ruby.
  start => visual studio c++ 200x xxxx edition => visual studio tools => visual studio 200x command prompt
  gem sources -a http://gemcutter.org
  gem install java_bin
-
    or
  cd (path to)\ext\java_bin\ext
  ruby extconf.rb
