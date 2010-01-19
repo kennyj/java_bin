@@ -92,7 +92,7 @@ typedef struct java_bin_parser {
   { u_int8_t* p; \
      p = (void*)&c; \
      memcpy(p, &ptr->data[ptr->current], sizeof(c)); \
-     _skipbytes(ptr, sizeof(c)); c; \
+     _skipbytes(ptr, sizeof(c)); \
   }
 
 #ifndef WORDS_BIGENDIAN
