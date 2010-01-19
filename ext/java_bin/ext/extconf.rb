@@ -2,7 +2,7 @@
 require 'mkmf'
 require 'rbconfig'
 
-unless PLATFORM =~ /mswin32/ # Linux
+unless RUBY_PLATFORM =~ /mswin32/ # Linux
   unless $CFLAGS.gsub!(/ -O[\dsz]?/, ' -O3')
     $CFLAGS << ' -O3'
   end
