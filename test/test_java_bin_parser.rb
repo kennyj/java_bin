@@ -238,7 +238,9 @@ class TestJavaBinParser < Test::Unit::TestCase
 
   def test_ordered_map
     arr = [1, (5 << 5) | 2] + [(1 << 5) | 1] + "a".unpack("C*") + [3, 8] + [(1 << 5) | 1] + "b".unpack("C*") + [3, 9]
-    assert_equal({"a" => 8, "b" => 9}, @parser.parse(arr.pack("C*")))
+    result = @parser.parse(arr.pack("C*"))
+    assert_equal({"a" => 8, "b" => 9}, result)
+    result.each { |k,v| assert k.frozen? }
   end
 
 #  def test_named_lst
@@ -250,7 +252,11 @@ class TestJavaBinParser < Test::Unit::TestCase
           [(7 << 5) | 0] + [(1 << 5) | 3] + "あいa".unpack("C*") +
           [(1 << 5) | 1] + "b".unpack("C*") +
           [(7 << 5) | 1]
-    assert_equal({"a" => "あいa", "b" => "あいa"}, @parser.parse(arr.pack("C*")))
+    result = @parser.parse(arr.pack("C*"))
+    assert_equal({"a" => "あいa", "b" => "あいa"}, result)
+
+    assert_equal 'UTF-8', result['a'].encoding.to_s if result['a'].respond_to? :encoding
+    assert_equal 'UTF-8', result['b'].encoding.to_s if result['b'].respond_to? :encoding
   end
 
   LARGE_SIZE = 1000

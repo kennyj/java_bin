@@ -193,7 +193,6 @@ static VALUE JavaBinParser_read_val(JAVA_BIN_PARSER* ptr) {
         }
         return value;
       } else {
-        //TODO 1.9.x
         return rb_str_new4(ptr->cache[size - 1]);   // freeze共有
         //return rb_str_new3(ptr->cache[size - 1]); // 共有(変更があったら分裂)
         

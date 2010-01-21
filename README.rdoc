@@ -4,7 +4,7 @@ This is an Apache Solr JavaBin format (binary format) implementation for Ruby.
 
 == Features
 
-* fast parse, and less network traffic.
+* fast parse(2.5 - 5 times faster than ruby eval), and less network traffic.
  MRI 1.8.7
   [data1]
   ruby eval parse. 5000 times. elapsed time 1.282744
@@ -91,6 +91,8 @@ This is an Apache Solr JavaBin format (binary format) implementation for Ruby.
 
 * more parse speed
 * license
+* pure parse encoding bug (1.9.x)
+* shared string over parsing
 * windows build(1.9.x)
 * 64bit build
 * builder(writer)作成
