@@ -55,7 +55,7 @@ This is an Apache Solr JavaBin format (binary format) implementation for Ruby.
  gem install java_bin
 
  (Windows)
- fix (path to)\uby\lib\ruby\1.8\i386-mswin32\config.h
+ fix (path to)\ruby\lib\ruby\1.8\i386-mswin32\config.h
    #if _MSC_VER != 1200
      ↓
    #if _MSC_VER < 1200
