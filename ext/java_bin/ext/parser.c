@@ -72,11 +72,11 @@ static VALUE JavaBinParser_read_small_long(JAVA_BIN_PARSER* ptr) {
 static VALUE JavaBinParser_read_string(JAVA_BIN_PARSER* ptr) {
   int size;
   int i;
-
+  int start;
   unsigned char b;
 
   size = JavaBinParser_read_size(ptr);
-  ptr->last_string_offset = ptr->current;
+  start = ptr->current;
   for (i = 0; i < size; i++) {
     /* HINT. read utf-8 char */
     b = _getbyte(ptr);
@@ -87,8 +87,7 @@ static VALUE JavaBinParser_read_string(JAVA_BIN_PARSER* ptr) {
       _skipbytes(ptr, 2);
     } /* TODO 4byte以上のケース? */
   }
-  ptr->last_string_len = ptr->current - ptr->last_string_offset;
-  return _utf8_string((const char*) &ptr->data[ptr->last_string_offset], ptr->last_string_len); 
+  return _utf8_string((const char*) &ptr->data[start], ptr->current - start); 
 }
 
 static VALUE JavaBinParser_read_byte(JAVA_BIN_PARSER* ptr) {
@@ -140,7 +139,7 @@ static VALUE JavaBinParser_read_double(JAVA_BIN_PARSER* ptr) {
 }
 
 static void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr) {
-  _EXTERN_STRING_INFO* newP;
+  VALUE* newP;
   int next_size;
   if (ptr->cache == NULL) {
     next_size = 64;
@@ -148,13 +147,13 @@ static void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr) {
     next_size = ptr->cache_size * 2;
   }
 
-  newP = (_EXTERN_STRING_INFO*) malloc(next_size * sizeof(_EXTERN_STRING_INFO));
+  newP = (VALUE*) malloc(next_size * sizeof(VALUE));
   if (!newP) {
     rb_raise(rb_eRuntimeError, "JavaBinParser_extend_cache - allocate error");
   }
 
   if (ptr->cache) {
-    memcpy(newP, ptr->cache, sizeof(_EXTERN_STRING_INFO) * ptr->cache_size);
+    memcpy(newP, ptr->cache, sizeof(VALUE) * ptr->cache_size);
   }
   ptr->cache = newP;
   ptr->cache_size = next_size;
@@ -186,17 +185,20 @@ static VALUE JavaBinParser_read_val(JAVA_BIN_PARSER* ptr) {
         /* rubyの文字列 */
         value = JavaBinParser_read_val(ptr);
 
-        /* 参照文字列としてcの文字列を保持 */
-        ptr->cache[ptr->cache_index].offset = ptr->last_string_offset;
-        ptr->cache[ptr->cache_index].len    = ptr->last_string_len;
-        ptr->cache_index ++;
+        /* 参照文字列として文字列を保持 */
+        ptr->cache[ptr->cache_index++] = value;
         /* 参照文字列用のcacheを拡張する */
         if (ptr->cache_size <= ptr->cache_index) {
           JavaBinParser_extend_cache(ptr);
         }
         return value;
       } else {
-        return _utf8_string((const char*)&ptr->data[ptr->cache[size - 1].offset], ptr->cache[size - 1].len); 
+        //TODO 1.9.x
+        return rb_str_new4(ptr->cache[size - 1]);   // freeze共有
+        //return rb_str_new3(ptr->cache[size - 1]); // 共有(変更があったら分裂)
+        
+	//return ptr->cache[size - 1];              // 同じ物
+        //return rb_str_dup(ptr->cache[size - 1]);  // コピー
       }
     case SHIFTED_ORDERED_MAP:
     case SHIFTED_NAMED_LST:
@@ -268,6 +270,7 @@ static VALUE JavaBinParser_read_val(JAVA_BIN_PARSER* ptr) {
     case SOLRDOCLST:
       hash = rb_hash_new();
       value = JavaBinParser_read_val(ptr);
+      // TODO キーのfreeze
       rb_hash_aset(hash, rb_str_new2("numFound"), rb_ary_entry(value, 0));
       rb_hash_aset(hash, rb_str_new2("start"),    rb_ary_entry(value, 1));
       rb_hash_aset(hash, rb_str_new2("maxScore"), rb_ary_entry(value, 2));
@@ -288,8 +291,17 @@ static void JavaBinParser_free(JAVA_BIN_PARSER* ptr) {
   }
 }
 
+static void JavaBinParser_mark(JAVA_BIN_PARSER* ptr) {
+  int i;
+  if (ptr) {
+    for (i = 0; i < ptr->cache_index; i++) {
+      rb_gc_mark_maybe(ptr->cache[i]);
+    }
+  }
+}
+
 static VALUE JavaBinParser_alloc(VALUE klass) {
-  return Data_Wrap_Struct(klass, 0, JavaBinParser_free, NULL);
+  return Data_Wrap_Struct(klass, JavaBinParser_mark, JavaBinParser_free, NULL);
 }
 
 /*
@@ -358,7 +370,7 @@ static VALUE rb_cParser_initialize(VALUE self) {
   }
   DATA_PTR(self) = ptr;
 
-  /* 参照文字列の準備(ここでも初期化しておかないと、たまにsegしちゃいますruby 1.8.7) */
+  /* 参照文字列の準備(ここでも初期化しておかないと、たまにsegvしちゃいますruby 1.8.7) */
   ptr->cache = NULL;
   ptr->cache_index = 0;
  

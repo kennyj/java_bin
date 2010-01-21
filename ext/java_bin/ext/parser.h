@@ -56,14 +56,6 @@
 #define  SHIFTED_SLONG           (SLONG >> 5)
 
 /*
- * 参照文字列情報保持用
- */
-typedef struct _extern_string_info {
-  int offset;
-  int len;
-} _EXTERN_STRING_INFO;
-
-/*
  * 読込処理データ保持構造体
  */
 typedef struct java_bin_parser {
@@ -73,11 +65,9 @@ typedef struct java_bin_parser {
   unsigned char  tag_byte;
 
   /* 外部文字列用 */
-  _EXTERN_STRING_INFO* cache; 
+  VALUE*               cache; 
   int                  cache_size;
   int                  cache_index;
-  int                  last_string_offset;
-  int                  last_string_len;
 } JAVA_BIN_PARSER;
 
 #ifdef HAVE_RUBY_ENCODING_H
@@ -137,6 +127,7 @@ static VALUE JavaBinParser_read_float(JAVA_BIN_PARSER* ptr);
 static VALUE JavaBinParser_read_double(JAVA_BIN_PARSER* ptr);
 static VALUE JavaBinParser_read_val(JAVA_BIN_PARSER* ptr);
 static void JavaBinParser_free(JAVA_BIN_PARSER* ptr);
+static void JavaBinParser_mark(JAVA_BIN_PARSER* ptr);
 static VALUE JavaBinParser_alloc(VALUE klass);
 static void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr);
 static VALUE rb_cParser_parse(VALUE self, VALUE data);
