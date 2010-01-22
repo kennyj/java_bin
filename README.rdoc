@@ -91,7 +91,7 @@ This is an Apache Solr JavaBin format (binary format) implementation for Ruby.
 
 * more parse speed
 * license
-* pure parse encoding bug (1.9.x)
+* pure parser encoding bug (1.9.x)
 * shared string over parsing
 * windows build(1.9.x)
 * 64bit build
