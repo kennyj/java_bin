@@ -9,6 +9,8 @@ unless RUBY_PLATFORM =~ /mswin32/ # Linux
   if CONFIG['CC'] =~ /gcc/
     $CFLAGS << ' -Wall'
   end
+  have_header("byteswap.h")
+  have_header("sys/types.h")
 else # Windows 
   $CFLAGS.gsub!(/-O2b2xg-/, '/O2b2x')
   $CFLAGS.gsub!(/-MD/, ' /MT')
@@ -18,8 +20,6 @@ end
 
 $CFLAGS << ' -DRUBY_19' if RUBY_VERSION >= '1.9'
 
-have_header("byteswap.h")
-have_header("sys/types.h")
 have_header("ruby.h")
 have_header("ruby/encoding.h")
 
