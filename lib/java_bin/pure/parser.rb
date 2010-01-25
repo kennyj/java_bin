@@ -47,7 +47,7 @@ module JavaBin
       end
     
       def parse(input)
-        array = input.bytes.to_a
+        array = input.unpack("C*")
         check_version(array[0])
         @input = array
         @current = 1 # HINT VERSIONをとばす
@@ -191,7 +191,7 @@ module JavaBin
     
       def read_chars
         size = read_size
-        str = ''
+        str = []
         size.times {
           # HINT. read utf-8 char
           b = getbyte
@@ -208,6 +208,7 @@ module JavaBin
             str << getbyte
           end
         }
+	str = str.pack("C*")
         str.force_encoding('utf-8') if str.respond_to? :force_encoding
         str
       end
