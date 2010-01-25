@@ -13,7 +13,8 @@ end
 
 class TestJavaBinParser < Test::Unit::TestCase
 
-  READ_FLAG = (RUBY_VERSION >= '1.9' ? 'r:utf-8' : 'rb')
+  READ_UTF8 = (RUBY_VERSION >= '1.9' ? 'rb:utf-8' : 'rb')
+  READ_ASCII = (RUBY_VERSION >= '1.9' ? 'rb:ascii' : 'rb')
 
   private
   def write_v_int(i, output)
@@ -63,22 +64,22 @@ class TestJavaBinParser < Test::Unit::TestCase
   end
 
   def test_javabin_dat
-    result = @parser.parse(open("fixtures/javabin.dat", READ_FLAG).read)
+    result = @parser.parse(open("fixtures/javabin.dat", READ_ASCII).read)
     assert result['response']['docs'][0]['features'].include?('eaiou with umlauts: ëäïöü')
     assert_equal result['response']['docs'][1]['incubationdate_dt'], Time.local(2006, 1, 17, 9, 0, 0)
     assert_equal result['response']['docs'][1]['score'], 0.5030758380889893
   end
 
   def test_javabin2_dat
-    result = @parser.parse(open("fixtures/javabin2.dat", READ_FLAG).read)
+    result = @parser.parse(open("fixtures/javabin2.dat", READ_ASCII).read)
     assert_equal 19, result['response']['docs'].size
   end
 
 
   TIMES = 5000
   def test_javabin_parse_and_ruby_eval
-    r  = open("fixtures/ruby.dat", READ_FLAG).read
-    jb = open("fixtures/javabin.dat", READ_FLAG).read
+    r  = open("fixtures/ruby.dat", READ_UTF8).read
+    jb = open("fixtures/javabin.dat", READ_ASCII).read
     puts ""
     r_et  = elapsed_time("ruby eval parse. ", TIMES) { eval(r) }
     jb_et = elapsed_time("javabin parse.   ", TIMES) { @parser.parse(jb) }
@@ -87,8 +88,8 @@ class TestJavaBinParser < Test::Unit::TestCase
   end
 
   def test_javabin2_parse_and_ruby2_eval
-    r  = open("fixtures/ruby2.dat", READ_FLAG).read
-    jb = open("fixtures/javabin2.dat", READ_FLAG).read
+    r  = open("fixtures/ruby2.dat", READ_UTF8).read
+    jb = open("fixtures/javabin2.dat", READ_ASCII).read
     puts ""
     r_et  = elapsed_time("ruby2 eval parse. ", TIMES) { eval(r) }
     jb_et = elapsed_time("javabin2 parse.   ", TIMES) { @parser.parse(jb) }
