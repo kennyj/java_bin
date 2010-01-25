@@ -46,7 +46,7 @@ This is an Apache Solr JavaBin format (binary format) implementation for Ruby.
 
 * Ruby1.8.7 or later (include 1.9.x)
 * (recommended) C compiler (gcc or vc++): you can also use java_bin without c extension, but 'pure' is 30 times slower than 'ext'.
-* JavaBin has been tested with MRI 1.8.7, REE 1.8.7, YARV 1.9.2 pre1 on Ubuntu Linux 9.10 (32bit) and MRI 1.8.6 on Windows Vista (32bit), and Apache Solr 1.4  
+* JavaBin has been tested with MRI 1.8.7, REE 1.8.7, YARV 1.9.2 pre1 on Ubuntu Linux 9.10 (32bit) and MRI 1.8.6, YARV 1.9.1 on Windows Vista (32bit), and Apache Solr 1.4  
 
 == Install
 
@@ -93,7 +93,6 @@ This is an Apache Solr JavaBin format (binary format) implementation for Ruby.
 * license
 * pure parser encoding bug (1.9.x)
 * shared string over parsing
-* windows build(1.9.x)
 * 64bit build
 * builder(writer)作成
 * JRuby support
