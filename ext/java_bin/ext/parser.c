@@ -9,22 +9,28 @@ static VALUE rb_cParser;
 
 static ID    i_At; // Time#at用
 #ifdef HAVE_RUBY_ENCODING_H
-static rb_encoding* rb_encUtf8;
+  static rb_encoding* rb_encUtf8;
 #endif
+
+static VALUE jbp_numFound;
+static VALUE jbp_start;
+static VALUE jbp_maxScore;
+static VALUE jbp_docs;
+
+static VALUE jbp_terminator;
 
 /*
  * javabinフォーマット読み込み関数群
  */
 static inline void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr) {
   int next_size;
-  if (ptr->cache == NULL || (ptr->cache_size <= ptr->cache_index)) {
-    next_size = ((ptr->cache == NULL) ? 64 : ptr->cache_size * 2);
-    ptr->cache = (VALUE*) realloc(ptr->cache, next_size * sizeof(VALUE));
-    if (!ptr->cache) {
-      rb_raise(rb_eRuntimeError, "JavaBinParser_extend_cache - allocate error");
-    }
-    ptr->cache_size = next_size;
+
+  next_size = ((ptr->cache == NULL) ? 64 : ptr->cache_size * 2);
+  ptr->cache = (VALUE*) realloc(ptr->cache, next_size * sizeof(VALUE));
+  if (!ptr->cache) {
+    rb_raise(rb_eRuntimeError, "JavaBinParser_extend_cache - allocate error");
   }
+  ptr->cache_size = next_size;
 }
 
 static inline int32_t JavaBinParser_read_v_int(JAVA_BIN_PARSER* ptr) {
@@ -33,7 +39,7 @@ static inline int32_t JavaBinParser_read_v_int(JAVA_BIN_PARSER* ptr) {
   int shift;
   byte = _getbyte(ptr);
   result = byte & 0x7f;
-  for(shift = 7; (byte & 0x80) != 0; shift += 7) {
+  for (shift = 7; (byte & 0x80) != 0; shift += 7) {
     byte = _getbyte(ptr);
     result |= (((int32_t)(byte & 0x7f)) << shift);
   }
@@ -46,7 +52,7 @@ static inline int64_t JavaBinParser_read_v_long(JAVA_BIN_PARSER* ptr) {
   int shift;
   byte = _getbyte(ptr);
   result = byte & 0x7f;
-  for(shift = 7; (byte & 0x80) != 0; shift += 7) {
+  for (shift = 7; (byte & 0x80) != 0; shift += 7) {
     byte = _getbyte(ptr);
     result |= (((int64_t)(byte & 0x7f)) << shift);
   }
@@ -117,15 +123,18 @@ static inline VALUE JavaBinParser_read_extern_string(JAVA_BIN_PARSER* ptr) {
   if (size == 0) {
     /* rubyの文字列 */
     value = JavaBinParser_read_val(ptr);
+    OBJ_FREEZE(value);
     /* 参照文字列として文字列を保持 */
     ptr->cache[ptr->cache_index++] = value;
     /* 必要があれば参照文字列用のcacheを拡張する */
-    JavaBinParser_extend_cache(ptr);
+    if (ptr->cache_size <= ptr->cache_index) {
+      JavaBinParser_extend_cache(ptr);
+    }
     return value;
   } else {
-    return rb_str_new4(ptr->cache[size - 1]);   // freeze共有
+    //return rb_str_new4(ptr->cache[size - 1]);   // freeze共有
     //return rb_str_new3(ptr->cache[size - 1]); // 共有(変更があったら分裂)
-    //return ptr->cache[size - 1];              // 同じ物
+    return ptr->cache[size - 1];              // 同じ物
     //return rb_str_dup(ptr->cache[size - 1]);  // コピー
   }
 }
@@ -232,11 +241,10 @@ static inline VALUE JavaBinParser_read_solr_doc_list(JAVA_BIN_PARSER* ptr) {
   VALUE hash, array;
   hash = rb_hash_new();
   array = JavaBinParser_read_val(ptr);
-  // TODO キーのfreeze
-  rb_hash_aset(hash, rb_str_new2("numFound"), rb_ary_entry(array, 0));
-  rb_hash_aset(hash, rb_str_new2("start"),    rb_ary_entry(array, 1));
-  rb_hash_aset(hash, rb_str_new2("maxScore"), rb_ary_entry(array, 2));
-  rb_hash_aset(hash, rb_str_new2("docs"),     JavaBinParser_read_val(ptr));
+  rb_hash_aset(hash, jbp_numFound, rb_ary_entry(array, 0));
+  rb_hash_aset(hash, jbp_start,    rb_ary_entry(array, 1));
+  rb_hash_aset(hash, jbp_maxScore, rb_ary_entry(array, 2));
+  rb_hash_aset(hash, jbp_docs,     JavaBinParser_read_val(ptr));
   return hash;
 }
 
@@ -396,12 +404,31 @@ void Init_parser(void) {
   rb_mJavaBin = rb_define_module("JavaBin");
   rb_mExt     = rb_define_module_under(rb_mJavaBin, "Ext");
   rb_cParser  = rb_define_class_under(rb_mExt, "Parser", rb_cObject);
-  
+ 
   /* メモリーアロケーター設定 */
   rb_define_alloc_func(rb_cParser, JavaBinParser_alloc);
   /* コンストラクタ */
   rb_define_method(rb_cParser, "initialize", rb_cParser_initialize, 0);
   /* parseメソッド*/
   rb_define_method(rb_cParser, "parse", rb_cParser_parse, 1);
+
+  /* 繰り返し使うので変数&定数化 */
+  /* HINT 定数にするとGCの対象にならないっぽいので */
+  rb_define_const(rb_cParser, "NUM_FOUND", rb_str_new2("numFound"));
+  jbp_numFound = rb_const_get(rb_cParser, rb_intern("NUM_FOUND"));
+  rb_define_const(rb_cParser, "START", rb_str_new2("start"));
+  jbp_start    = rb_const_get(rb_cParser, rb_intern("START")); 
+  rb_define_const(rb_cParser, "MAX_SCORE", rb_str_new2("maxScore"));
+  jbp_maxScore = rb_const_get(rb_cParser, rb_intern("MAX_SCORE"));
+  rb_define_const(rb_cParser, "DOCS", rb_str_new2("docs"));
+  jbp_docs     = rb_const_get(rb_cParser, rb_intern("DOCS"));
+  OBJ_FREEZE(jbp_numFound);
+  OBJ_FREEZE(jbp_start);
+  OBJ_FREEZE(jbp_maxScore);
+  OBJ_FREEZE(jbp_docs);
+ 
+  rb_define_const(rb_cParser, "TERMINATOR", rb_str_new2("terminator")); // iterator終端用のオブジェクト
+  jbp_terminator = rb_const_get(rb_cParser, rb_intern("TERMINATOR"));
+  OBJ_FREEZE(jbp_terminator);
 }
 

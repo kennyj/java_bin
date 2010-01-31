@@ -193,7 +193,7 @@ class TestJavaBinParser < Test::Unit::TestCase
   end
 
   def test_iterator
-    assert_equal([0, 127, nil, true], @parser.parse([1, 14, 3, 0, 3, 127, 0, 1,15].pack("C*")))
+    assert_equal([0, 127, nil, true, false], @parser.parse([1, 14, 3, 0, 3, 127, 0, 1, 2, 15].pack("C*")))
   end
 
 #  def test_term

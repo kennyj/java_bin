@@ -44,7 +44,7 @@
 #define  EXTERN_STRING   (7U << 5)
 
 /* HINT. 終端判定用オブジェクト */
-#define END_OBJ ((int) NULL)
+#define END_OBJ (jbp_terminator)
 
 /* HINT. 先に計算しておく(unsignedなので論理シフト) */
 #define  SHIFTED_STR             (STR >> 5)
