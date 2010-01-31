@@ -16,23 +16,15 @@ static rb_encoding* rb_encUtf8;
  * javabinフォーマット読み込み関数群
  */
 static inline void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr) {
-  VALUE* newP;
   int next_size;
-  if (ptr->cache == NULL) {
-    next_size = 64;
-  } else {
-    next_size = ptr->cache_size * 2;
-  }
+  
+  next_size = ((ptr->cache == NULL) ? 64 : ptr->cache_size * 2);
+  ptr->cache = (VALUE*) realloc(ptr->cache, next_size * sizeof(VALUE));
 
-  newP = (VALUE*) malloc(next_size * sizeof(VALUE));
-  if (!newP) {
+  if (!ptr->cache) {
     rb_raise(rb_eRuntimeError, "JavaBinParser_extend_cache - allocate error");
   }
 
-  if (ptr->cache) {
-    memcpy(newP, ptr->cache, sizeof(VALUE) * ptr->cache_size);
-  }
-  ptr->cache = newP;
   ptr->cache_size = next_size;
 }
 
