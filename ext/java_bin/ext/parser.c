@@ -17,15 +17,14 @@ static rb_encoding* rb_encUtf8;
  */
 static inline void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr) {
   int next_size;
-  
-  next_size = ((ptr->cache == NULL) ? 64 : ptr->cache_size * 2);
-  ptr->cache = (VALUE*) realloc(ptr->cache, next_size * sizeof(VALUE));
-
-  if (!ptr->cache) {
-    rb_raise(rb_eRuntimeError, "JavaBinParser_extend_cache - allocate error");
+  if (ptr->cache == NULL || (ptr->cache_size <= ptr->cache_index)) {
+    next_size = ((ptr->cache == NULL) ? 64 : ptr->cache_size * 2);
+    ptr->cache = (VALUE*) realloc(ptr->cache, next_size * sizeof(VALUE));
+    if (!ptr->cache) {
+      rb_raise(rb_eRuntimeError, "JavaBinParser_extend_cache - allocate error");
+    }
+    ptr->cache_size = next_size;
   }
-
-  ptr->cache_size = next_size;
 }
 
 static inline int32_t JavaBinParser_read_v_int(JAVA_BIN_PARSER* ptr) {
@@ -120,10 +119,8 @@ static inline VALUE JavaBinParser_read_extern_string(JAVA_BIN_PARSER* ptr) {
     value = JavaBinParser_read_val(ptr);
     /* 参照文字列として文字列を保持 */
     ptr->cache[ptr->cache_index++] = value;
-    /* 参照文字列用のcacheを拡張する */
-    if (ptr->cache_size <= ptr->cache_index) {
-      JavaBinParser_extend_cache(ptr);
-    }
+    /* 必要があれば参照文字列用のcacheを拡張する */
+    JavaBinParser_extend_cache(ptr);
     return value;
   } else {
     return rb_str_new4(ptr->cache[size - 1]);   // freeze共有
@@ -335,17 +332,13 @@ static VALUE rb_cParser_parse(VALUE self, VALUE data) {
   ptr->tag_byte = 0;
 
   /*
-   * 参照文字列既に確保している場合は解放
-   * HINT. インスタンスを使いまわす時に発生する
+   * 参照文字列保持、既に確保している場合は使いまわす。
+   * 確保していない場合は初回分を確保
    */
-  if (ptr->cache) {
-    free(ptr->cache);
-  }
-
-  /* 参照文字列の準備 */
-  ptr->cache = NULL;
   ptr->cache_index = 0;
-  JavaBinParser_extend_cache(ptr);
+  if (!ptr->cache) {
+    JavaBinParser_extend_cache(ptr);
+  }
  
   return JavaBinParser_read_val(ptr);
 }
@@ -360,8 +353,9 @@ static VALUE rb_cParser_initialize(VALUE self) {
   }
   DATA_PTR(self) = ptr;
 
-  /* 参照文字列の準備(ここでも初期化しておかないと、たまにsegvしちゃいますruby 1.8.7) */
+  /* 参照文字列の準備 */
   ptr->cache = NULL;
+  ptr->cache_size = 0;
   ptr->cache_index = 0;
  
   return self;
