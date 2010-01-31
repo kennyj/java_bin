@@ -70,11 +70,9 @@ static VALUE JavaBinParser_read_small_long(JAVA_BIN_PARSER* ptr) {
 }
 
 static VALUE JavaBinParser_read_string(JAVA_BIN_PARSER* ptr) {
-  int size;
-  int i;
+  int size, i;
   int start;
   unsigned char b;
-
   size = JavaBinParser_read_size(ptr);
   start = ptr->current;
   for (i = 0; i < size; i++) {
@@ -88,6 +86,52 @@ static VALUE JavaBinParser_read_string(JAVA_BIN_PARSER* ptr) {
     } /* TODO 4byte以上のケース? */
   }
   return _utf8_string((const char*) &ptr->data[start], ptr->current - start); 
+}
+
+static VALUE JavaBinParser_read_array(JAVA_BIN_PARSER* ptr) {
+  int size, i;
+  VALUE array;
+  size  = JavaBinParser_read_size(ptr);
+  array = rb_ary_new();
+  for (i = 0; i < size; i++) {
+    rb_ary_push(array,JavaBinParser_read_val(ptr));
+  }
+  return array;
+}
+
+static VALUE JavaBinParser_read_extern_string(JAVA_BIN_PARSER* ptr) {
+  int size;
+  VALUE value;
+  size = JavaBinParser_read_size(ptr);
+  if (size == 0) {
+    /* rubyの文字列 */
+    value = JavaBinParser_read_val(ptr);
+    /* 参照文字列として文字列を保持 */
+    ptr->cache[ptr->cache_index++] = value;
+    /* 参照文字列用のcacheを拡張する */
+    if (ptr->cache_size <= ptr->cache_index) {
+      JavaBinParser_extend_cache(ptr);
+    }
+    return value;
+  } else {
+    return rb_str_new4(ptr->cache[size - 1]);   // freeze共有
+    //return rb_str_new3(ptr->cache[size - 1]); // 共有(変更があったら分裂)
+    //return ptr->cache[size - 1];              // 同じ物
+    //return rb_str_dup(ptr->cache[size - 1]);  // コピー
+  }
+}
+
+static VALUE JavaBinParser_read_ordered_map(JAVA_BIN_PARSER* ptr) {
+  int size, i;
+  VALUE hash, key, value;
+  size = JavaBinParser_read_size(ptr);
+  hash = rb_hash_new();
+  for (i = 0; i < size; i++) {
+    key   = JavaBinParser_read_val(ptr);
+    value = JavaBinParser_read_val(ptr);
+    rb_hash_aset(hash, key, value);
+  }
+  return hash;
 }
 
 static VALUE JavaBinParser_read_byte(JAVA_BIN_PARSER* ptr) {
@@ -138,6 +182,55 @@ static VALUE JavaBinParser_read_double(JAVA_BIN_PARSER* ptr) {
   return rb_float_new(*((double*)&c));
 }
 
+static VALUE JavaBinParser_read_byte_array(JAVA_BIN_PARSER* ptr) {
+  int size, i;
+  VALUE array;
+  size = JavaBinParser_read_v_int(ptr);
+  array = rb_ary_new();
+  for (i = 0; i < size; i++) {
+    rb_ary_push(array, INT2FIX(_getbyte(ptr)));
+  }
+  return array;
+}
+
+static VALUE JavaBinParser_read_map(JAVA_BIN_PARSER* ptr) {
+  int size, i;
+  VALUE hash, key, value;
+  size = JavaBinParser_read_v_int(ptr);
+  hash = rb_hash_new();
+  for (i = 0; i < size; i++) {
+    key   = JavaBinParser_read_val(ptr);
+    value = JavaBinParser_read_val(ptr);
+    rb_hash_aset(hash, key, value);
+  }
+  return hash;
+}
+
+static VALUE JavaBinParser_read_iterator(JAVA_BIN_PARSER* ptr) {
+  VALUE array, value;
+  array = rb_ary_new();
+  while (1) {
+    value = JavaBinParser_read_val(ptr);
+    if (value == END_OBJ) {
+      break;
+    }
+    rb_ary_push(array, value);
+  }
+  return array;
+}
+
+static VALUE JavaBinParser_read_solr_doc_list(JAVA_BIN_PARSER* ptr) {
+  VALUE hash, array;
+  hash = rb_hash_new();
+  array = JavaBinParser_read_val(ptr);
+  // TODO キーのfreeze
+  rb_hash_aset(hash, rb_str_new2("numFound"), rb_ary_entry(array, 0));
+  rb_hash_aset(hash, rb_str_new2("start"),    rb_ary_entry(array, 1));
+  rb_hash_aset(hash, rb_str_new2("maxScore"), rb_ary_entry(array, 2));
+  rb_hash_aset(hash, rb_str_new2("docs"),     JavaBinParser_read_val(ptr));
+  return hash;
+}
+
 static void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr) {
   VALUE* newP;
   int next_size;
@@ -160,55 +253,17 @@ static void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr) {
 }
 
 static VALUE JavaBinParser_read_val(JAVA_BIN_PARSER* ptr) {
-  int size;
-  int i;
-  VALUE key;
-  VALUE value;
-  VALUE array;
-  VALUE hash;
-
   ptr->tag_byte = _getbyte(ptr);
   switch (ptr->tag_byte >> 5) { /* unsignedなので論理シフト */
     case SHIFTED_STR:
       return JavaBinParser_read_string(ptr);
     case SHIFTED_ARR:
-      size = JavaBinParser_read_size(ptr);
-      array = rb_ary_new();
-      for (i = 0; i < size; i++) {
-        value = JavaBinParser_read_val(ptr);
-        rb_ary_push(array, value);
-      }
-      return array;
+      return JavaBinParser_read_array(ptr);
     case SHIFTED_EXTERN_STRING:
-      size = JavaBinParser_read_size(ptr);
-      if(size == 0) {
-        /* rubyの文字列 */
-        value = JavaBinParser_read_val(ptr);
-
-        /* 参照文字列として文字列を保持 */
-        ptr->cache[ptr->cache_index++] = value;
-        /* 参照文字列用のcacheを拡張する */
-        if (ptr->cache_size <= ptr->cache_index) {
-          JavaBinParser_extend_cache(ptr);
-        }
-        return value;
-      } else {
-        return rb_str_new4(ptr->cache[size - 1]);   // freeze共有
-        //return rb_str_new3(ptr->cache[size - 1]); // 共有(変更があったら分裂)
-        
-	//return ptr->cache[size - 1];              // 同じ物
-        //return rb_str_dup(ptr->cache[size - 1]);  // コピー
-      }
+      return JavaBinParser_read_extern_string(ptr);
     case SHIFTED_ORDERED_MAP:
     case SHIFTED_NAMED_LST:
-      size = JavaBinParser_read_size(ptr);
-      hash = rb_hash_new();
-      for (i = 0; i < size; i++) {
-        key   = JavaBinParser_read_val(ptr);
-        value = JavaBinParser_read_val(ptr);
-        rb_hash_aset(hash, key, value);
-      }
-      return hash;
+      return JavaBinParser_read_ordered_map(ptr);
     case SHIFTED_SINT:
       return JavaBinParser_read_small_int(ptr);
     case SHIFTED_SLONG:
@@ -231,12 +286,7 @@ static VALUE JavaBinParser_read_val(JAVA_BIN_PARSER* ptr) {
     case DATE:
       return JavaBinParser_read_date(ptr);
     case BYTEARR:
-      size = JavaBinParser_read_v_int(ptr);
-      array = rb_ary_new();
-      for (i = 0; i < size; i++) {
-        rb_ary_push(array, INT2FIX(_getbyte(ptr)));
-      }
-      return array;
+      return JavaBinParser_read_byte_array(ptr);
     case NULL_MARK:
       return Qnil;
     case BOOL_TRUE:
@@ -244,63 +294,18 @@ static VALUE JavaBinParser_read_val(JAVA_BIN_PARSER* ptr) {
     case BOOL_FALSE:
       return Qfalse;
     case MAP:
-      size = JavaBinParser_read_v_int(ptr);
-      hash = rb_hash_new();
-      for (i = 0; i < size; i++) {
-        key   = JavaBinParser_read_val(ptr);
-        value = JavaBinParser_read_val(ptr);
-        rb_hash_aset(hash, key, value);
-      }
-      return hash;
-   case ITERATOR:
-      array = rb_ary_new();
-      while (1) {
-        value = JavaBinParser_read_val(ptr);
-        if (value == END_OBJ) {
-          break;
-        }
-        rb_ary_push(array, value);
-      }
-      return array;
+      return JavaBinParser_read_map(ptr);
+    case ITERATOR:
+      return JavaBinParser_read_iterator(ptr);
     case END:
       return END_OBJ; 
     case SOLRDOC:
       return JavaBinParser_read_val(ptr);
     case SOLRDOCLST:
-      hash = rb_hash_new();
-      value = JavaBinParser_read_val(ptr);
-      // TODO キーのfreeze
-      rb_hash_aset(hash, rb_str_new2("numFound"), rb_ary_entry(value, 0));
-      rb_hash_aset(hash, rb_str_new2("start"),    rb_ary_entry(value, 1));
-      rb_hash_aset(hash, rb_str_new2("maxScore"), rb_ary_entry(value, 2));
-      rb_hash_aset(hash, rb_str_new2("docs"),     JavaBinParser_read_val(ptr));
-      return hash;
+      return JavaBinParser_read_solr_doc_list(ptr);
     default:
       rb_raise(rb_eRuntimeError, "JavaBinParser_read_val - unknown tag type");
   }
-}
-
-static void JavaBinParser_free(JAVA_BIN_PARSER* ptr) {
-  if (ptr) {
-    //free(ptr->data);
-    if (ptr->cache) {
-      free(ptr->cache);
-    }
-    free(ptr);
-  }
-}
-
-static void JavaBinParser_mark(JAVA_BIN_PARSER* ptr) {
-  int i;
-  if (ptr) {
-    for (i = 0; i < ptr->cache_index; i++) {
-      rb_gc_mark_maybe(ptr->cache[i]);
-    }
-  }
-}
-
-static VALUE JavaBinParser_alloc(VALUE klass) {
-  return Data_Wrap_Struct(klass, JavaBinParser_mark, JavaBinParser_free, NULL);
 }
 
 /*
@@ -327,11 +332,6 @@ static VALUE rb_cParser_parse(VALUE self, VALUE data) {
     rb_raise(rb_eRuntimeError, "rb_cParser_parse - data is empty.");
   }
 
-  //ptr->data = (unsigned char*) malloc(dataLen);
-  //if (!ptr->data) {
-  //  rb_raise(rb_eRuntimeError, "rb_cParser_parse - allocate error");
-  //}
-  //memcpy(ptr->data, ptrData, dataLen);
   ptr->data = (unsigned char*)ptrData;
   ptr->data_len = dataLen;
 
@@ -374,6 +374,28 @@ static VALUE rb_cParser_initialize(VALUE self) {
   ptr->cache_index = 0;
  
   return self;
+}
+
+static void JavaBinParser_free(JAVA_BIN_PARSER* ptr) {
+  if (ptr) {
+    if (ptr->cache) {
+      free(ptr->cache);
+    }
+    free(ptr);
+  }
+}
+
+static void JavaBinParser_mark(JAVA_BIN_PARSER* ptr) {
+  int i;
+  if (ptr) {
+    for (i = 0; i < ptr->cache_index; i++) {
+      rb_gc_mark_maybe(ptr->cache[i]);
+    }
+  }
+}
+
+static VALUE JavaBinParser_alloc(VALUE klass) {
+  return Data_Wrap_Struct(klass, JavaBinParser_mark, JavaBinParser_free, NULL);
 }
 
 /*
