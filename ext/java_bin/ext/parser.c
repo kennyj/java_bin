@@ -15,8 +15,28 @@ static rb_encoding* rb_encUtf8;
 /*
  * javabinフォーマット読み込み関数群
  */
+static inline void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr) {
+  VALUE* newP;
+  int next_size;
+  if (ptr->cache == NULL) {
+    next_size = 64;
+  } else {
+    next_size = ptr->cache_size * 2;
+  }
 
-static int32_t JavaBinParser_read_v_int(JAVA_BIN_PARSER* ptr) {
+  newP = (VALUE*) malloc(next_size * sizeof(VALUE));
+  if (!newP) {
+    rb_raise(rb_eRuntimeError, "JavaBinParser_extend_cache - allocate error");
+  }
+
+  if (ptr->cache) {
+    memcpy(newP, ptr->cache, sizeof(VALUE) * ptr->cache_size);
+  }
+  ptr->cache = newP;
+  ptr->cache_size = next_size;
+}
+
+static inline int32_t JavaBinParser_read_v_int(JAVA_BIN_PARSER* ptr) {
   unsigned char byte;
   int32_t result;
   int shift;
@@ -29,7 +49,7 @@ static int32_t JavaBinParser_read_v_int(JAVA_BIN_PARSER* ptr) {
   return result;
 }
 
-static int64_t JavaBinParser_read_v_long(JAVA_BIN_PARSER* ptr) {
+static inline int64_t JavaBinParser_read_v_long(JAVA_BIN_PARSER* ptr) {
   unsigned char byte;
   int64_t result;
   int shift;
@@ -42,7 +62,7 @@ static int64_t JavaBinParser_read_v_long(JAVA_BIN_PARSER* ptr) {
   return result;
 }
 
-static int JavaBinParser_read_size(JAVA_BIN_PARSER* ptr) {
+static inline int JavaBinParser_read_size(JAVA_BIN_PARSER* ptr) {
   int size;
   size = (ptr->tag_byte & 0x1f);
   if (size == 0x1f) {
@@ -51,7 +71,7 @@ static int JavaBinParser_read_size(JAVA_BIN_PARSER* ptr) {
   return size;
 }
 
-static VALUE JavaBinParser_read_small_int(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_small_int(JAVA_BIN_PARSER* ptr) {
   int32_t result;
   result = ptr->tag_byte & 0x0f;
   if ((ptr->tag_byte & 0x10) != 0) {
@@ -60,7 +80,7 @@ static VALUE JavaBinParser_read_small_int(JAVA_BIN_PARSER* ptr) {
   return INT2NUM(result);
 }
 
-static VALUE JavaBinParser_read_small_long(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_small_long(JAVA_BIN_PARSER* ptr) {
   int64_t result;
   result = ptr->tag_byte & 0x0f;
   if ((ptr->tag_byte & 0x10) != 0) {
@@ -69,7 +89,7 @@ static VALUE JavaBinParser_read_small_long(JAVA_BIN_PARSER* ptr) {
   return LL2NUM(result);
 }
 
-static VALUE JavaBinParser_read_string(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_string(JAVA_BIN_PARSER* ptr) {
   int size, i;
   int start;
   unsigned char b;
@@ -88,7 +108,7 @@ static VALUE JavaBinParser_read_string(JAVA_BIN_PARSER* ptr) {
   return _utf8_string((const char*) &ptr->data[start], ptr->current - start); 
 }
 
-static VALUE JavaBinParser_read_array(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_array(JAVA_BIN_PARSER* ptr) {
   int size, i;
   VALUE array;
   size  = JavaBinParser_read_size(ptr);
@@ -99,7 +119,7 @@ static VALUE JavaBinParser_read_array(JAVA_BIN_PARSER* ptr) {
   return array;
 }
 
-static VALUE JavaBinParser_read_extern_string(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_extern_string(JAVA_BIN_PARSER* ptr) {
   int size;
   VALUE value;
   size = JavaBinParser_read_size(ptr);
@@ -121,7 +141,7 @@ static VALUE JavaBinParser_read_extern_string(JAVA_BIN_PARSER* ptr) {
   }
 }
 
-static VALUE JavaBinParser_read_ordered_map(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_ordered_map(JAVA_BIN_PARSER* ptr) {
   int size, i;
   VALUE hash, key, value;
   size = JavaBinParser_read_size(ptr);
@@ -134,55 +154,55 @@ static VALUE JavaBinParser_read_ordered_map(JAVA_BIN_PARSER* ptr) {
   return hash;
 }
 
-static VALUE JavaBinParser_read_byte(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_byte(JAVA_BIN_PARSER* ptr) {
   int8_t c;
   _readnumeric(ptr, c);
   return INT2FIX(*((int8_t*)&c));
 }
 
-static VALUE JavaBinParser_read_short(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_short(JAVA_BIN_PARSER* ptr) {
   u_int16_t c;
   _readnumeric(ptr, c);
   c = _swap_16(c);
   return INT2FIX(*((int16_t*)&c));
 }
 
-static VALUE JavaBinParser_read_int(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_int(JAVA_BIN_PARSER* ptr) {
   u_int32_t c;
   _readnumeric(ptr, c);
   c = _swap_32(c);
   return INT2NUM(*((int32_t*)&c));
 }
 
-static VALUE JavaBinParser_read_long(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_long(JAVA_BIN_PARSER* ptr) {
   u_int64_t c;
   _readnumeric(ptr, c);
   c = _swap_64(c);
   return LL2NUM(*((int64_t*)&c));
 }
 
-static VALUE JavaBinParser_read_date(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_date(JAVA_BIN_PARSER* ptr) {
   u_int64_t c;
   _readnumeric(ptr, c);
   c = _swap_64(c);
   return rb_funcall(rb_cTime, i_At, 1, ULL2NUM(*((int64_t*)&c) / 1000));
 }
 
-static VALUE JavaBinParser_read_float(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_float(JAVA_BIN_PARSER* ptr) {
   u_int32_t c;
   _readnumeric(ptr, c);
   c = _swap_32(c);
   return rb_float_new((double)*((float*)&c));
 }
 
-static VALUE JavaBinParser_read_double(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_double(JAVA_BIN_PARSER* ptr) {
   u_int64_t c;
   _readnumeric(ptr, c);
   c = _swap_64(c);
   return rb_float_new(*((double*)&c));
 }
 
-static VALUE JavaBinParser_read_byte_array(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_byte_array(JAVA_BIN_PARSER* ptr) {
   int size, i;
   VALUE array;
   size = JavaBinParser_read_v_int(ptr);
@@ -193,7 +213,7 @@ static VALUE JavaBinParser_read_byte_array(JAVA_BIN_PARSER* ptr) {
   return array;
 }
 
-static VALUE JavaBinParser_read_map(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_map(JAVA_BIN_PARSER* ptr) {
   int size, i;
   VALUE hash, key, value;
   size = JavaBinParser_read_v_int(ptr);
@@ -206,7 +226,7 @@ static VALUE JavaBinParser_read_map(JAVA_BIN_PARSER* ptr) {
   return hash;
 }
 
-static VALUE JavaBinParser_read_iterator(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_iterator(JAVA_BIN_PARSER* ptr) {
   VALUE array, value;
   array = rb_ary_new();
   while (1) {
@@ -219,7 +239,7 @@ static VALUE JavaBinParser_read_iterator(JAVA_BIN_PARSER* ptr) {
   return array;
 }
 
-static VALUE JavaBinParser_read_solr_doc_list(JAVA_BIN_PARSER* ptr) {
+static inline VALUE JavaBinParser_read_solr_doc_list(JAVA_BIN_PARSER* ptr) {
   VALUE hash, array;
   hash = rb_hash_new();
   array = JavaBinParser_read_val(ptr);
@@ -229,27 +249,6 @@ static VALUE JavaBinParser_read_solr_doc_list(JAVA_BIN_PARSER* ptr) {
   rb_hash_aset(hash, rb_str_new2("maxScore"), rb_ary_entry(array, 2));
   rb_hash_aset(hash, rb_str_new2("docs"),     JavaBinParser_read_val(ptr));
   return hash;
-}
-
-static void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr) {
-  VALUE* newP;
-  int next_size;
-  if (ptr->cache == NULL) {
-    next_size = 64;
-  } else {
-    next_size = ptr->cache_size * 2;
-  }
-
-  newP = (VALUE*) malloc(next_size * sizeof(VALUE));
-  if (!newP) {
-    rb_raise(rb_eRuntimeError, "JavaBinParser_extend_cache - allocate error");
-  }
-
-  if (ptr->cache) {
-    memcpy(newP, ptr->cache, sizeof(VALUE) * ptr->cache_size);
-  }
-  ptr->cache = newP;
-  ptr->cache_size = next_size;
 }
 
 static VALUE JavaBinParser_read_val(JAVA_BIN_PARSER* ptr) {

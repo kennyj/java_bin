@@ -114,31 +114,35 @@ typedef struct java_bin_parser {
   typedef unsigned __int64 u_int64_t;
 #endif
 
-static int32_t JavaBinParser_read_v_int(JAVA_BIN_PARSER* ptr);
-static int64_t JavaBinParser_read_v_long(JAVA_BIN_PARSER* ptr);
-static int JavaBinParser_read_size(JAVA_BIN_PARSER* ptr);
-static VALUE JavaBinParser_read_small_int(JAVA_BIN_PARSER* ptr);
-static VALUE JavaBinParser_read_small_long(JAVA_BIN_PARSER* ptr);
-static VALUE JavaBinParser_read_string(JAVA_BIN_PARSER* ptr);
-static VALUE JavaBinParser_read_array(JAVA_BIN_PARSER* ptr);
-static VALUE JavaBinParser_read_extern_string(JAVA_BIN_PARSER* ptr);
-static VALUE JavaBinParser_read_ordered_map(JAVA_BIN_PARSER* ptr); 
-static VALUE JavaBinParser_read_byte(JAVA_BIN_PARSER* ptr);
-static VALUE JavaBinParser_read_short(JAVA_BIN_PARSER* ptr);
-static VALUE JavaBinParser_read_int(JAVA_BIN_PARSER* ptr);
-static VALUE JavaBinParser_read_long(JAVA_BIN_PARSER* ptr);
-static VALUE JavaBinParser_read_date(JAVA_BIN_PARSER* ptr);
-static VALUE JavaBinParser_read_float(JAVA_BIN_PARSER* ptr);
-static VALUE JavaBinParser_read_double(JAVA_BIN_PARSER* ptr);
-static VALUE JavaBinParser_read_byte_array(JAVA_BIN_PARSER* ptr);
-static VALUE JavaBinParser_read_map(JAVA_BIN_PARSER* ptr);
-static VALUE JavaBinParser_read_iterator(JAVA_BIN_PARSER* ptr);
-static VALUE JavaBinParser_read_solr_doc_list(JAVA_BIN_PARSER* ptr);
+//static void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr);
+
+//static int32_t JavaBinParser_read_v_int(JAVA_BIN_PARSER* ptr);
+//static int64_t JavaBinParser_read_v_long(JAVA_BIN_PARSER* ptr);
+//static int JavaBinParser_read_size(JAVA_BIN_PARSER* ptr);
+//static VALUE JavaBinParser_read_small_int(JAVA_BIN_PARSER* ptr);
+//static VALUE JavaBinParser_read_small_long(JAVA_BIN_PARSER* ptr);
+//static VALUE JavaBinParser_read_string(JAVA_BIN_PARSER* ptr);
+//static VALUE JavaBinParser_read_array(JAVA_BIN_PARSER* ptr);
+//static VALUE JavaBinParser_read_extern_string(JAVA_BIN_PARSER* ptr);
+//static VALUE JavaBinParser_read_ordered_map(JAVA_BIN_PARSER* ptr); 
+//static VALUE JavaBinParser_read_byte(JAVA_BIN_PARSER* ptr);
+//static VALUE JavaBinParser_read_short(JAVA_BIN_PARSER* ptr);
+//static VALUE JavaBinParser_read_int(JAVA_BIN_PARSER* ptr);
+//static VALUE JavaBinParser_read_long(JAVA_BIN_PARSER* ptr);
+//static VALUE JavaBinParser_read_date(JAVA_BIN_PARSER* ptr);
+//static VALUE JavaBinParser_read_float(JAVA_BIN_PARSER* ptr);
+//static VALUE JavaBinParser_read_double(JAVA_BIN_PARSER* ptr);
+//static VALUE JavaBinParser_read_byte_array(JAVA_BIN_PARSER* ptr);
+//static VALUE JavaBinParser_read_map(JAVA_BIN_PARSER* ptr);
+//static VALUE JavaBinParser_read_iterator(JAVA_BIN_PARSER* ptr);
+//static VALUE JavaBinParser_read_solr_doc_list(JAVA_BIN_PARSER* ptr);
+
 static VALUE JavaBinParser_read_val(JAVA_BIN_PARSER* ptr);
+
 static void JavaBinParser_free(JAVA_BIN_PARSER* ptr);
 static void JavaBinParser_mark(JAVA_BIN_PARSER* ptr);
 static VALUE JavaBinParser_alloc(VALUE klass);
-static void JavaBinParser_extend_cache(JAVA_BIN_PARSER* ptr);
+
 static VALUE rb_cParser_parse(VALUE self, VALUE data);
 static VALUE rb_cParser_initialize(VALUE self);
 
