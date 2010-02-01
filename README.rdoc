@@ -7,21 +7,21 @@ This is an Apache Solr JavaBin format (binary format) implementation for Ruby.
 * fast parse(2.5 - 5 times faster than ruby eval), and less network traffic.
  MRI 1.8.7
   [data2]
-  ruby eval parse. 5000 times. elapsed time 6.793939
-  javabin parse.    5000 times. elapsed time 1.601022
-  4.24350133852002 times
+  ruby eval parse. 5000 times. elapsed time 6.664981
+  javabin parse.   5000 times. elapsed time 1.472825
+  4.52530409247534 times
 
  REE 1.8.7
   [data2]
-  ruby eval parse. 5000 times. elapsed time 4.739839
-  javabin parse.    5000 times. elapsed time 1.148916
-  4.12548785115709 times
+  ruby eval parse. 5000 times. elapsed time 4.844482
+  javabin parse.   5000 times. elapsed time 1.059044
+  4.57439162112245 times
 
- YARM 1.9.2 pre1
+ YARV 1.9.2 pre1
   [data2]
-  ruby eval parse. 5000 times. elapsed time 6.552406579
-  javabin parse .   5000 times. elapsed time 1.459406626
-  4.489774448235238 times
+  ruby eval parse. 5000 times. elapsed time 6.659331328
+  javabin parse.   5000 times. elapsed time 1.261828473
+  5.277525012704322 times
 
 * rsolr/solr-ruby support.
 * pure and c extension code.

@@ -1,3 +1,8 @@
+0.3.3 (2010/02/01)
+  * fix iterator false bug
+  * performance improve
+  * refactoring
+
 0.3.2 (2010/01/25)
   * windows 1.9.x build
   * fix pure parser bug
