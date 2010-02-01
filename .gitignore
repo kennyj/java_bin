@@ -29,3 +29,4 @@ Makefile
 *.lib
 *.pdb
 *.obj
+*.s
