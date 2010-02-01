@@ -183,7 +183,7 @@ static inline VALUE JavaBinParser_read_date(JAVA_BIN_PARSER* ptr) {
   u_int64_t c;
   _readnumeric(ptr, c);
   c = _swap_64(c);
-  return rb_funcall(rb_cTime, i_At, 1, ULL2NUM(*((int64_t*)&c) / 1000));
+  return rb_funcall(rb_cTime, i_At, 1, ULL2NUM(c / 1000));
 }
 
 static inline VALUE JavaBinParser_read_float(JAVA_BIN_PARSER* ptr) {
