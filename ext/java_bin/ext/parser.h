@@ -2,10 +2,7 @@
 #define _PARSER_H_
 
 #include "ruby.h"
-
-#if HAVE_BYTESWAP_H
-  #include <byteswap.h>
-#endif /* HAVE_BYTESWAP_H */
+#include "byteswap.h"
 
 #if HAVE_SYS_TYPES_H
   #include <sys/types.h>
