@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["kennyj"]
-  s.date = %q{2010-02-02}
+  s.date = %q{2010-02-06}
   s.description = %q{Apache Solr JavaBin format (binary format) implementation for Ruby.}
   s.email = %q{kennyj@gmail.com}
   s.extensions = ["ext/java_bin/ext/extconf.rb"]
@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
      "README.rdoc",
      "Rakefile",
      "VERSION",
+     "ext/java_bin/ext/byteswap.h",
      "ext/java_bin/ext/extconf.rb",
      "ext/java_bin/ext/parser.c",
      "ext/java_bin/ext/parser.h",

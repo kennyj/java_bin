@@ -1,3 +1,7 @@
+0.3.4 (2010/02/06)
+  * remove dependence on glibc byteswap.h
+  * a little performance improve
+
 0.3.3 (2010/02/01)
   * fix iterator false bug
   * performance improve
