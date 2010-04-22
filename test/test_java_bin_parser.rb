@@ -2,6 +2,7 @@
 
 require 'stringio'
 require 'helper'
+require 'time'
 
 case ENV['JavaBin']
 when 'pure'
@@ -75,7 +76,12 @@ class TestJavaBinParser < Test::Unit::TestCase
     assert_equal 19, result['response']['docs'].size
   end
 
-
+  def test_javabin_parse_and_ruby_eval_with_time
+    r = eval(open("fixtures/ruby.dat", READ_UTF8).read)
+    jb = @parser.parse(open("fixtures/javabin.dat", READ_ASCII).read)
+    assert_equal Time.xmlschema(r['response']['docs'][1]['incubationdate_dt']), jb['response']['docs'][1]['incubationdate_dt']
+  end
+ 
   TIMES = 5000
   def test_javabin_parse_and_ruby_eval
     r  = open("fixtures/ruby.dat", READ_UTF8).read
