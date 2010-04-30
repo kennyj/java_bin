@@ -8,6 +8,7 @@ static VALUE rb_mExt;
 static VALUE rb_cParser;
 
 static ID    i_At; // Time#at用
+static ID    i_Utc; // Time#utc用
 #ifdef HAVE_RUBY_ENCODING_H
   static rb_encoding* rb_encUtf8;
 #endif
@@ -183,7 +184,7 @@ static inline VALUE JavaBinParser_read_date(JAVA_BIN_PARSER* ptr) {
   u_int64_t c;
   _readnumeric(ptr, c);
   c = _swap_64(c);
-  return rb_funcall(rb_cTime, i_At, 1, ULL2NUM(c / 1000));
+  return rb_funcall(rb_funcall(rb_cTime, i_At, 1, ULL2NUM(c / 1000)), i_Utc, 0);
 }
 
 static inline VALUE JavaBinParser_read_float(JAVA_BIN_PARSER* ptr) {
@@ -396,6 +397,7 @@ static VALUE JavaBinParser_alloc(VALUE klass) {
  */
 void Init_parser(void) {
   i_At = rb_intern("at");
+  i_Utc = rb_intern("utc");
 #ifdef HAVE_RUBY_ENCODING_H
   rb_encUtf8 = rb_utf8_encoding();
 #endif
