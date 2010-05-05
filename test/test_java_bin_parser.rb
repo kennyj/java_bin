@@ -68,7 +68,9 @@ class TestJavaBinParser < Test::Unit::TestCase
     result = @parser.parse(open("fixtures/javabin.dat", READ_ASCII).read)
     assert result['response']['docs'][0]['features'].include?('eaiou with umlauts: ëäïöü')
     assert_equal result['response']['docs'][1]['incubationdate_dt'], Time.local(2006, 1, 17, 9, 0, 0)
-    assert_equal result['response']['docs'][1]['score'], 0.5030758380889893
+    assert_in_delta result['response']['maxScore'], 0.6288448, 0.0001
+    assert_in_delta result['response']['docs'][0]['score'], 0.628844797611237, 0.0001
+    assert_in_delta result['response']['docs'][1]['score'], 0.5030758380889893, 0.0001
   end
 
   def test_javabin2_dat
