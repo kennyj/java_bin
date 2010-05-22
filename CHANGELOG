@@ -1,6 +1,7 @@
 0.3.5 (2010/05/22)
   * fix issue 3
   * fix issue 4 (strict aliasing rule problem)
+  * 64 bit support (tested with cent os 5.x)
 
 0.3.4 (2010/02/06)
   * remove dependence on glibc byteswap.h
