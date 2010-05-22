@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{java_bin}
-  s.version = "0.3.4"
+  s.version = "0.3.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["kennyj"]
-  s.date = %q{2010-02-06}
+  s.date = %q{2010-05-22}
   s.description = %q{Apache Solr JavaBin format (binary format) implementation for Ruby.}
   s.email = %q{kennyj@gmail.com}
   s.extensions = ["ext/java_bin/ext/extconf.rb"]
@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
      "fixtures/json2.dat",
      "fixtures/ruby.dat",
      "fixtures/ruby2.dat",
+     "how_to_release.txt",
      "java_bin.gemspec",
      "lib/java_bin.rb",
      "lib/java_bin/ext.rb",
@@ -54,9 +55,9 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{Apache Solr JavaBin format implementation for Ruby.}
   s.test_files = [
-    "test/test_java_bin_parser.rb",
+    "test/helper.rb",
      "test/xxx_performance.rb",
-     "test/helper.rb"
+     "test/test_java_bin_parser.rb"
   ]
 
   if s.respond_to? :specification_version then
