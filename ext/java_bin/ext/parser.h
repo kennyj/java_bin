@@ -111,6 +111,16 @@ typedef struct java_bin_parser {
   typedef unsigned __int64 u_int64_t;
 #endif
 
+typedef union java_bin_float {
+  float     f_value;
+  u_int32_t i_value;
+} JAVA_BIN_FLOAT;
+
+typedef union java_bin_double {
+  double    d_value;
+  u_int64_t i_value;
+} JAVA_BIN_DOUBLE;
+
 static VALUE JavaBinParser_read_val(JAVA_BIN_PARSER* ptr);
 
 static void JavaBinParser_free(JAVA_BIN_PARSER* ptr);

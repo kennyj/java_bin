@@ -162,10 +162,10 @@ class TestJavaBinParser < Test::Unit::TestCase
   end
 
   def test_float
+    assert_equal  0.0, @parser.parse([1, 8,  0.0].pack("C2g"))
+    assert_equal  1.0, @parser.parse([1, 8,  1.0].pack("C2g"))
     assert_equal -1.0, @parser.parse([1, 8, -1.0].pack("C2g"))
-    assert_equal 1.0,  @parser.parse([1, 8, 1.0].pack("C2g"))
-    assert_equal 0.0,  @parser.parse([1, 8, 0.0].pack("C2g"))
-  end
+ end
 
   def test_date
     t = Time.now

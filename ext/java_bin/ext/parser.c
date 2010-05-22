@@ -188,17 +188,17 @@ static inline VALUE JavaBinParser_read_date(JAVA_BIN_PARSER* ptr) {
 }
 
 static inline VALUE JavaBinParser_read_float(JAVA_BIN_PARSER* ptr) {
-  u_int32_t c;
-  _readnumeric(ptr, c);
-  c = _swap_32(c);
-  return rb_float_new((double)*((float*)&c));
+  JAVA_BIN_FLOAT c;
+  _readnumeric(ptr, c.i_value);
+  c.i_value = _swap_32(c.i_value);
+  return rb_float_new((double)c.f_value);
 }
 
 static inline VALUE JavaBinParser_read_double(JAVA_BIN_PARSER* ptr) {
-  u_int64_t c;
-  _readnumeric(ptr, c);
-  c = _swap_64(c);
-  return rb_float_new(*((double*)&c));
+  JAVA_BIN_DOUBLE c;
+  _readnumeric(ptr, c.i_value);
+  c.i_value = _swap_64(c.i_value);
+  return rb_float_new(c.d_value);
 }
 
 static inline VALUE JavaBinParser_read_byte_array(JAVA_BIN_PARSER* ptr) {
