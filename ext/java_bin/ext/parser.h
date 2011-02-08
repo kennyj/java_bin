@@ -83,7 +83,7 @@ typedef struct java_bin_parser {
   }
 
 #ifndef WORDS_BIGENDIAN
-  #ifdef _WIN32
+  #if defined _WIN32 && !defined __MINGW32__
     #define _swap_16(o) _byteswap_ushort(o)
     #define _swap_32(o) _byteswap_ulong(o)
     #define _swap_64(o) _byteswap_uint64(o)
