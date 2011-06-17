@@ -74,6 +74,7 @@ This is an Apache Solr JavaBin format (binary format) implementation for Ruby.
 
 == TODO
 
+* Solr 3.1 support
 * max os x supoort
 * more parse speed
 * license
