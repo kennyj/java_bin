@@ -53,13 +53,20 @@
 #define  SHIFTED_SLONG           (SLONG >> 5)
 
 /*
+ * 文字列読み込み用関数の関数ポインタ
+ */
+typedef VALUE (*PTR_READ_STRING)(void*);
+
+/*
  * 読込処理データ保持構造体
  */
 typedef struct java_bin_parser {
   unsigned char* data;
   int            data_len;
   int            current;
+  int            version;
   unsigned char  tag_byte;
+  PTR_READ_STRING read_string;
 
   /* 外部文字列用 */
   VALUE*               cache; 

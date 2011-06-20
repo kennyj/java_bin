@@ -87,7 +87,7 @@ static inline VALUE JavaBinParser_read_small_long(JAVA_BIN_PARSER* ptr) {
   return LL2NUM(result);
 }
 
-static inline VALUE JavaBinParser_read_string(JAVA_BIN_PARSER* ptr) {
+static VALUE JavaBinParser_read_string_for_javabin_format_1(JAVA_BIN_PARSER* ptr) {
   int size, i;
   int start;
   unsigned char b;
@@ -104,6 +104,15 @@ static inline VALUE JavaBinParser_read_string(JAVA_BIN_PARSER* ptr) {
     } /* TODO 4byte以上のケース? */
   }
   return _utf8_string((const char*) &ptr->data[start], ptr->current - start); 
+}
+
+static VALUE JavaBinParser_read_string_for_javabin_format_2(JAVA_BIN_PARSER* ptr) {
+  int size;
+  int start;
+  size = JavaBinParser_read_size(ptr);
+  start = ptr->current;
+  ptr->current += size;
+  return _utf8_string((const char*) &ptr->data[start], size); 
 }
 
 static inline VALUE JavaBinParser_read_array(JAVA_BIN_PARSER* ptr) {
@@ -253,7 +262,7 @@ static VALUE JavaBinParser_read_val(JAVA_BIN_PARSER* ptr) {
   ptr->tag_byte = _getbyte(ptr);
   switch (ptr->tag_byte >> 5) { /* unsignedなので論理シフト */
     case SHIFTED_STR:
-      return JavaBinParser_read_string(ptr);
+      return ptr->read_string(ptr);
     case SHIFTED_ARR:
       return JavaBinParser_read_array(ptr);
     case SHIFTED_EXTERN_STRING:
@@ -333,11 +342,19 @@ static VALUE rb_cParser_parse(VALUE self, VALUE data) {
   ptr->data_len = dataLen;
 
   /* version check */
-  if (ptr->data[0] != 0x01) {
+  if (!(ptr->data[0] == 0x01 || ptr->data[0] == 0x02)) {
     rb_raise(rb_eRuntimeError, "rb_cParser_parse - not supported version [%d]", ptr->data[0]);
   }
 
-  ptr->current  = 1;   /* VERSIONをとばした */
+  ptr->version = ptr->data[0];
+  /* 文字列読込用の関数ポインタを設定する */
+  if (ptr->version == 0x01) {
+    ptr->read_string = (void*) JavaBinParser_read_string_for_javabin_format_1;
+  } else if (ptr->version == 0x02) {
+    ptr->read_string = (void*) JavaBinParser_read_string_for_javabin_format_2;
+  }
+
+  ptr->current  = 1;   /* skip format version */
   ptr->tag_byte = 0;
 
   /*

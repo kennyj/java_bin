@@ -61,7 +61,7 @@ class TestJavaBinParser < Test::Unit::TestCase
     assert @parser.parse([1, 1].pack("C*"))
   end
   def test_invalid_version
-    assert_raise(RuntimeError) { @parser.parse([2].pack("C*")) }
+    assert_raise(RuntimeError) { @parser.parse([3].pack("C*")) }
   end
 
   def test_javabin_dat
@@ -76,6 +76,22 @@ class TestJavaBinParser < Test::Unit::TestCase
   def test_javabin2_dat
     result = @parser.parse(open("fixtures/javabin2.dat", READ_ASCII).read)
     assert_equal 19, result['response']['docs'].size
+  end
+
+  def test_solr3_1_javabin_software_dat
+    result = @parser.parse(open("fixtures/fixtures_for_solr3.1/javabin_software.dat", READ_ASCII).read)
+    assert result['response']['docs'][0]['features'].include?('eaiou with circumflexes: êâîôû')
+    assert result['response']['docs'][0]['features'].include?('eaiou with umlauts: ëäïöü')
+    assert_equal result['response']['docs'][1]['incubationdate_dt'], Time.local(2006, 1, 17, 9, 0, 0)
+    assert_in_delta result['response']['maxScore'], 0.6042672, 0.0001
+    assert_in_delta result['response']['docs'][0]['score'], 0.6042672, 0.0001
+    assert_in_delta result['response']['docs'][1]['score'], 0.48341373, 0.0001
+  end
+
+  def test_solr3_1_javabin_all_dat
+    result = @parser.parse(open("fixtures/fixtures_for_solr3.1/javabin_all.dat", READ_ASCII).read)
+    assert_equal 17, result['response']['docs'].size
+    assert result['response']['docs'][0]['features'].include?('这是一个功能')
   end
 
   def test_javabin_parse_and_ruby_eval_with_time
