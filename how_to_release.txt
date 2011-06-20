@@ -3,7 +3,7 @@
 * vim CHANGELOG
 * vim README.rdoc
 * vim lib/java_bin/version.rb
-* rake version:bump:patch
+* rake version:bump:patch (major / minor)
 * rake gemspec
 * git commit -a -m "release x.x.x"
 * git tag vx.x.x
