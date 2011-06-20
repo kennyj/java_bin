@@ -334,7 +334,7 @@ static VALUE rb_cParser_parse(VALUE self, VALUE data) {
 
   /* version check */
   if (ptr->data[0] != 0x01) {
-    rb_raise(rb_eRuntimeError, "rb_cParser_parse - not supported version");
+    rb_raise(rb_eRuntimeError, "rb_cParser_parse - not supported version [%d]", ptr->data[0]);
   }
 
   ptr->current  = 1;   /* VERSIONをとばした */
