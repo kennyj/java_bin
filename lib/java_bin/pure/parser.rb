@@ -36,12 +36,12 @@ module JavaBin
   SHIFTED_SINT          = SINT >> 5
   SHIFTED_SLONG         = SLONG >> 5
 
-  VERSION  = 1
+  VERSIONS  = [1, 2]
   TERM_OBJ = :term_obj
  
     class Parser
   
-      attr_reader :tag_byte, :input, :current
+      attr_reader :tag_byte, :input, :current, :version
     
       def initialize
       end
@@ -49,15 +49,16 @@ module JavaBin
       def parse(input)
         array = input.unpack("C*")
         check_version(array[0])
+        @current = 0
         @input = array
-        @current = 1 # HINT VERSIONをとばす
+        @version = getbyte
         @tag_byte = nil
         read_val
       end
     
       private
       def check_version(byte)
-        return true if VERSION == byte
+        return true if VERSIONS.include?(byte)
         raise "unsupported version #{byte}"
       end
    
@@ -192,22 +193,26 @@ module JavaBin
       def read_chars
         size = read_size
         str = []
-        size.times {
-          # HINT. read utf-8 char
-          b = getbyte
-          if ((b & 0x80) == 0)
-            str << b
-          elsif ((b & 0xE0) == 0xC0)
-            #str << (((b & 0x1F) << 6) | (getbyte & 0x3F))
-            str << b
-            str << getbyte
-          else
-            #str << (((b & 0x0F) << 12) | ((getbyte & 0x3F) << 6) | (getbyte & 0x3F))
-            str << b
-            str << getbyte
-            str << getbyte
-          end
-        }
+        if @version == 1
+          size.times {
+            # HINT. read utf-8 char
+            b = getbyte
+            if ((b & 0x80) == 0)
+              str << b
+            elsif ((b & 0xE0) == 0xC0)
+              #str << (((b & 0x1F) << 6) | (getbyte & 0x3F))
+              str << b
+              str << getbyte
+            else
+              #str << (((b & 0x0F) << 12) | ((getbyte & 0x3F) << 6) | (getbyte & 0x3F))
+              str << b
+              str << getbyte
+              str << getbyte
+            end
+          }
+        else
+          size.times { str << getbyte }
+        end
 	str = str.pack("C*")
         str.force_encoding('utf-8') if str.respond_to? :force_encoding
         str
