@@ -9,6 +9,6 @@
 * git tag vx.x.x
 * git push
 * git push --tags
-* rake gemcutter:release
+* rake rubygems:release
 
 
