@@ -75,12 +75,11 @@ This is an Apache Solr JavaBin format (binary format) implementation for Ruby.
 
 == TODO
 
-* Solr 3.1 support
 * max os x supoort
 * more parse speed
 * license
 * shared string over parsing
-* builder(writer)作成
+* builder(writer)
 * JRuby support
 
 == References
@@ -106,4 +105,4 @@ Toshinori Kajihara <mailto:kennyj@gmail.com>
 
 == Copyright
 
-Copyright (c) 2010 kennyj. See LICENSE for details.
+Copyright (c) 2010, 2011 kennyj. See LICENSE for details.
