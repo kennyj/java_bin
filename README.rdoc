@@ -26,6 +26,7 @@ This is an Apache Solr JavaBin format (binary format) implementation for Ruby.
 * rsolr/solr-ruby support.
 * pure and c extension code.
 * ruby 1.8/1.9 support.
+* solr 1.4/3.1 support.
 
 == Requirements
 
