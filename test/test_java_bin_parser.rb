@@ -14,9 +14,6 @@ end
 
 class TestJavaBinParser < Test::Unit::TestCase
 
-  READ_UTF8 = (RUBY_VERSION >= '1.9' ? 'rb:utf-8' : 'rb')
-  READ_ASCII = (RUBY_VERSION >= '1.9' ? 'rb:ascii' : 'rb')
-
   private
   def write_v_int(i, output)
     while ((i & ~0x7F) != 0)
