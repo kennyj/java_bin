@@ -1,1 +1,2 @@
-script: "cd ext/java_bin/ext/; ruby extconf.rb; make; cd ../../.."
+before_script:
+  - "cd ext/java_bin/ext/; ruby extconf.rb; make; cd ../../.."
