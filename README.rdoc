@@ -104,4 +104,4 @@ Toshinori Kajihara <mailto:kennyj@gmail.com>
 
 == Copyright
 
-Copyright (c) 2010, 2011 kennyj. See LICENSE for details.
+Copyright (c) 2010 - 2012 kennyj. See LICENSE for details.
