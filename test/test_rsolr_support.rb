@@ -6,7 +6,7 @@ class TestRSolrSupportTest < Test::Unit::TestCase
     rsolr_connection=mock()
     rsolr_connection.expects(:execute).
             with { |rsolr_client, params|
-              assert_equal({wt: :javabin}, params[:params])
+              assert_equal({:wt => :javabin}, params[:params])
             }.
             returns(:status => 200,
                     :headers => '',
