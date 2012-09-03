@@ -1,3 +1,13 @@
+* rvm use 1.9.3
+* bundle update
+* rake
+* JavaBin=pure rake
+* rvm use 1.9.2
+* bundle update
+* rake
+* JavaBin=pure rake
+* rvm use ree
+* bundle update
 * rake
 * JavaBin=pure rake
 * vim CHANGELOG
