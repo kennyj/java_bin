@@ -1,3 +1,8 @@
+0.4.1 (2012/09/3)
+  * Adds travis ci support.
+  * Adds bundler support.
+  * First working version with rsolr 1.0.8.
+
 0.4.0 (2011/6/21)
   * solr 3.1 support
   * RailsInstaller support
