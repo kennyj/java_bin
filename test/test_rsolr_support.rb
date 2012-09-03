@@ -1,4 +1,4 @@
-require_relative 'helper'
+require 'helper'
 
 class TestRSolrSupportTest < Test::Unit::TestCase
   def test_queries_are_performed_with_javabin
