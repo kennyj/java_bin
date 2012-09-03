@@ -1,5 +1,13 @@
 require 'rubygems'
 require 'rake'
+require 'rake/extensiontask'
+
+Rake::ExtensionTask.new do |ext|
+  ext.name = 'parser'                # indicate the name of the extension.
+  ext.ext_dir = 'ext/java_bin/ext'         # search for 'hello_world' inside it.
+  ext.lib_dir = 'lib/java_bin/ext'              # put binaries into this folder.
+  ext.tmp_dir = 'tmp'                     # temporary folder used during compilation.
+end
 
 begin
   require 'jeweler'
@@ -38,7 +46,7 @@ rescue LoadError
   end
 end
 
-task :test
+task :test => :compile
 
 task :default => :test
 

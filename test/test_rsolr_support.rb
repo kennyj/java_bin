@@ -1,4 +1,4 @@
-require_relative 'helper'
+require File.dirname(__FILE__) + '/helper'
 
 class TestRSolrSupportTest < Test::Unit::TestCase
   def test_queries_are_performed_with_javabin
@@ -6,7 +6,8 @@ class TestRSolrSupportTest < Test::Unit::TestCase
     rsolr_connection=mock()
     rsolr_connection.expects(:execute).
             with { |rsolr_client, params|
-              assert_equal({wt: :javabin}, params[:params])
+              assert_equal({:wt => :javabin}, params[:params])
+              true
             }.
             returns(:status => 200,
                     :headers => '',
