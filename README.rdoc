@@ -79,7 +79,6 @@ This is an Apache Solr JavaBin format (binary format) implementation for Ruby.
 * license
 * shared string over parsing
 * builder(writer)
-* JRuby support
 
 == References
 
