@@ -3,10 +3,10 @@ require 'rake'
 require 'rake/extensiontask'
 
 Rake::ExtensionTask.new do |ext|
-  ext.name = 'parser'                # indicate the name of the extension.
-  ext.ext_dir = 'ext/java_bin/ext'         # search for 'hello_world' inside it.
-  ext.lib_dir = 'lib/java_bin/ext'              # put binaries into this folder.
-  ext.tmp_dir = 'tmp'                     # temporary folder used during compilation.
+  ext.name = 'parser'
+  ext.ext_dir = 'ext/java_bin/ext'
+  ext.lib_dir = 'lib/java_bin/ext'
+  ext.tmp_dir = 'tmp'
 end
 
 begin
@@ -49,6 +49,26 @@ end
 task :test => :compile
 
 task :default => :test
+
+task :valgrind => :compile do
+  #
+  # See:
+  # http://blog.flavorjon.es/2009/06/easily-valgrind-gdb-your-ruby-c.html
+  # 
+  def valgrind_errors(what)
+    valgrind_cmd="valgrind --log-fd=1 --tool=memcheck --partial-loads-ok=yes --undef-value-errors=no ruby -Ilib:test:ext #{what}"
+    puts "Executing: #{valgrind_cmd}"
+    output=`#{valgrind_cmd}`
+    puts output
+    /ERROR SUMMARY: (\d+) ERRORS/i.match(output)[1].to_i
+  end
+
+  java_bin_errors = valgrind_errors('test/test_java_bin_parser.rb')
+  
+  if java_bin_errors > 0
+    abort "Memory leaks are present, please check! (#{java_bin_errors} leaks!)"
+  end
+end
 
 require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
