@@ -19,6 +19,10 @@ begin
     gem.homepage = "http://github.com/kennyj/java_bin"
     gem.authors = ["kennyj"]
     gem.require_paths = ["lib", "ext"]
+    gem.add_development_dependency 'jeweler'
+    gem.add_development_dependency 'rake-compiler'
+    gem.add_development_dependency 'json'
+    gem.files.exclude 'Gemfile.lock'
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::RubygemsDotOrgTasks.new
@@ -54,7 +58,7 @@ task :valgrind => :compile do
   #
   # See:
   # http://blog.flavorjon.es/2009/06/easily-valgrind-gdb-your-ruby-c.html
-  # 
+  #
   def valgrind_errors(what)
     valgrind_cmd="valgrind --log-fd=1 --tool=memcheck --partial-loads-ok=yes --undef-value-errors=no ruby -Ilib:test:ext #{what}"
     puts "Executing: #{valgrind_cmd}"
@@ -64,7 +68,7 @@ task :valgrind => :compile do
   end
 
   java_bin_errors = valgrind_errors('test/test_java_bin_parser.rb')
-  
+
   if java_bin_errors > 0
     abort "Memory leaks are present, please check! (#{java_bin_errors} leaks!)"
   end

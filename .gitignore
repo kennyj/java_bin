@@ -20,6 +20,7 @@ pkg
 
 ## PROJECT::SPECIFIC
 Makefile
+Gemfile.lock
 *.o
 *.so
 *.log
