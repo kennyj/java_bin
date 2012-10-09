@@ -1,8 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'jeweler'
-gem 'rake-compiler'
-gem 'json'
+gemspec
 
 group :test do
   gem 'rsolr'
