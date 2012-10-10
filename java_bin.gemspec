@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["kennyj"]
-  s.date = "2012-09-03"
+  s.date = "2012-10-09"
   s.description = "Apache Solr JavaBin format (binary format) implementation for Ruby."
   s.email = "kennyj@gmail.com"
   s.extensions = ["ext/java_bin/ext/extconf.rb"]
@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
     ".travis.yml",
     "CHANGELOG",
     "Gemfile",
-    "Gemfile.lock",
     "LICENSE",
     "README.rdoc",
     "Rakefile",
@@ -67,15 +66,27 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<jeweler>, [">= 0"])
-      s.add_runtime_dependency(%q<rake-compiler>, [">= 0"])
-      s.add_runtime_dependency(%q<json>, [">= 0"])
+      s.add_runtime_dependency(%q<java_bin>, [">= 0"])
+      s.add_development_dependency(%q<jeweler>, [">= 0"])
+      s.add_development_dependency(%q<rake-compiler>, [">= 0"])
+      s.add_development_dependency(%q<json>, [">= 0"])
+      s.add_development_dependency(%q<jeweler>, [">= 0"])
+      s.add_development_dependency(%q<rake-compiler>, [">= 0"])
+      s.add_development_dependency(%q<json>, [">= 0"])
     else
+      s.add_dependency(%q<java_bin>, [">= 0"])
+      s.add_dependency(%q<jeweler>, [">= 0"])
+      s.add_dependency(%q<rake-compiler>, [">= 0"])
+      s.add_dependency(%q<json>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
       s.add_dependency(%q<rake-compiler>, [">= 0"])
       s.add_dependency(%q<json>, [">= 0"])
     end
   else
+    s.add_dependency(%q<java_bin>, [">= 0"])
+    s.add_dependency(%q<jeweler>, [">= 0"])
+    s.add_dependency(%q<rake-compiler>, [">= 0"])
+    s.add_dependency(%q<json>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
     s.add_dependency(%q<rake-compiler>, [">= 0"])
     s.add_dependency(%q<json>, [">= 0"])
