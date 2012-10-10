@@ -6,10 +6,7 @@ vim CHANGELOG
 vim README.rdoc
 vim lib/java_bin/version.rb
 
-* git commit -a -m "release x.x.x"
-* git tag vx.x.x
-* git push
-* git push --tags
-* rake rubygems:release
+git commit -a -m "release x.x.x"
+rake release
 
 
