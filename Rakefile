@@ -1,33 +1,14 @@
-require 'rubygems'
+require 'bundler'
+Bundler::GemHelper.install_tasks
+
 require 'rake'
 require 'rake/extensiontask'
 
 Rake::ExtensionTask.new do |ext|
-  ext.name = 'parser'
+  ext.name    = 'parser'
   ext.ext_dir = 'ext/java_bin/ext'
   ext.lib_dir = 'lib/java_bin/ext'
   ext.tmp_dir = 'tmp'
-end
-
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name = "java_bin"
-    gem.summary = %Q{Apache Solr JavaBin format implementation for Ruby.}
-    gem.description = %Q{Apache Solr JavaBin format (binary format) implementation for Ruby.}
-    gem.email = "kennyj@gmail.com"
-    gem.homepage = "http://github.com/kennyj/java_bin"
-    gem.authors = ["kennyj"]
-    gem.require_paths = ["lib", "ext"]
-    gem.add_development_dependency 'jeweler'
-    gem.add_development_dependency 'rake-compiler'
-    gem.add_development_dependency 'json'
-    gem.files.exclude 'Gemfile.lock'
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
-  end
-  Jeweler::RubygemsDotOrgTasks.new
-rescue LoadError
-  puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
 end
 
 require 'rake/testtask'
@@ -76,10 +57,10 @@ end
 
 require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ""
+  require 'java_bin/version'
 
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "java_bin #{version}"
+  rdoc.title = "java_bin #{JavaBin::VERSION}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end

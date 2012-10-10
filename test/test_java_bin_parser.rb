@@ -1,7 +1,6 @@
 # vim:fileencoding=utf-8
-
+require File.dirname(__FILE__) + '/helper'
 require 'stringio'
-require 'helper'
 require 'time'
 
 case ENV['JavaBin']
