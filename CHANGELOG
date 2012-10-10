@@ -1,3 +1,8 @@
+0.4.2 (2012/10/11)
+  * Add valgrind support *Moreno Carullo*
+  * Clean gem dependencies *Moreno Carullo & Kenny J*
+  * Bye bye jeweler *Kenny J*
+
 0.4.1 (2012/09/3)
   * Adds travis ci support.
   * Adds bundler support.

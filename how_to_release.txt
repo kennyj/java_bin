@@ -1,20 +1,11 @@
-* rvm use 1.9.3
-* bundle update
-* rake
-* JavaBin=pure rake
-* rvm use 1.9.2
-* bundle update
-* rake
-* JavaBin=pure rake
-* rvm use ree
-* bundle update
-* rake
-* JavaBin=pure rake
-* vim CHANGELOG
-* vim README.rdoc
-* vim lib/java_bin/version.rb
-* rake version:bump:patch (major / minor)
-* rake gemspec
+rvm use 1.9.3; bundle update; bundle exec rake clean test; JavaBin=pure bundle exec rake test;
+rvm use 1.9.2; bundle update; bundle exec rake clean test; JavaBin=pure bundle exec rake test;
+rvm use ree; bundle update; bundle exec rake clean test; JavaBin=pure bundle exec rake test;
+
+vim CHANGELOG
+vim README.rdoc
+vim lib/java_bin/version.rb
+
 * git commit -a -m "release x.x.x"
 * git tag vx.x.x
 * git push
