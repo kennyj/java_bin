@@ -55,7 +55,11 @@ task :valgrind => :compile do
   end
 end
 
-require 'rdoc/task'
+begin
+  require 'rdoc/task'
+rescue LoadError
+  require 'rake/rdoctask'
+end
 Rake::RDocTask.new do |rdoc|
   require 'java_bin/version'
 
