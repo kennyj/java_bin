@@ -7,6 +7,6 @@ vim README.rdoc
 vim lib/java_bin/version.rb
 
 git commit -a -m "release x.x.x"
-rake release
+bundle exec rake release
 
 
