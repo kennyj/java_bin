@@ -10,7 +10,7 @@ class Test::Unit::TestCase
 end
 
 require 'rsolr'
-require 'mocha'
+require 'mocha/setup'
 
 require 'bundler'
 Bundler.require

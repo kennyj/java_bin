@@ -25,5 +25,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency(%q<json>, [">= 1.7.5"])
   s.add_development_dependency(%q<rsolr>, [">= 1.0.8"])
   s.add_development_dependency(%q<mocha>, [">= 0.12.6"])
+  s.add_development_dependency(%q<rdoc>, [">= 2.4.2"])
 end
 
