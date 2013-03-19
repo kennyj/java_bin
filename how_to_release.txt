@@ -1,6 +1,7 @@
+rvm use 2.0.0; bundle update; bundle exec rake clean test; JavaBin=pure bundle exec rake test;
 rvm use 1.9.3; bundle update; bundle exec rake clean test; JavaBin=pure bundle exec rake test;
 rvm use 1.9.2; bundle update; bundle exec rake clean test; JavaBin=pure bundle exec rake test;
-rvm use ree; bundle update; bundle exec rake clean test; JavaBin=pure bundle exec rake test;
+rvm use ree;   bundle update; bundle exec rake clean test; JavaBin=pure bundle exec rake test;
 
 vim CHANGELOG
 vim README.rdoc
